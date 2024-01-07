@@ -29,8 +29,7 @@ from jinja2 import Environment
 app = Flask(__name__)
 app.secret_key = "sawq#@21"
 
-connection_string = f"mongodb+srv://hackers:hackers123@psg.kmis61j.mongodb.net/"
-client = MongoClient(connection_string)
+client = MongoClient(os.getenv(connection_string))
 db = client['gamification']
 student_collection = db['student']
 recommendation_collection = db['recommendation'] 
@@ -1695,5 +1694,4 @@ def slogout():
     return redirect("/studentlogin")
 
 if __name__ == "__main__":
-    app.debug = True
-    app.run(port=5001)
+    app.run(host="0.0.0.0", port=5000)

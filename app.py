@@ -29,7 +29,7 @@ from jinja2 import Environment
 app = Flask(__name__)
 app.secret_key = "sawq#@21"
 
-client = MongoClient(os.getenv(connection_string))
+client = MongoClient(os.getenv('connection_string'))
 db = client['gamification']
 student_collection = db['student']
 recommendation_collection = db['recommendation'] 

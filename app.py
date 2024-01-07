@@ -8,14 +8,8 @@ import bcrypt
 import joblib
 from transformers import AutoTokenizer, TFAutoModel
 from flask import jsonify
-from tensorflow.keras.layers import Embedding, LSTM, Dense, Input
-from tensorflow.keras.models import Model
 from flask import render_template, redirect, session, send_from_directory
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.models import Sequential
 from collections import Counter
 from tensorflow.keras.models import Sequential, load_model
 from sklearn.preprocessing import LabelEncoder

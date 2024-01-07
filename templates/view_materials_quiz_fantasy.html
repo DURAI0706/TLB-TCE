@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Materials</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/65e63729-532b-458e-aa16-f693151bda5c/dfshbim-40c694b9-c12a-47f1-8ecd-f2ca8d5cdcb3.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzY1ZTYzNzI5LTUzMmItNDU4ZS1hYTE2LWY2OTMxNTFiZGE1Y1wvZGZzaGJpbS00MGM2OTRiOS1jMTJhLTQ3ZjEtOGVjZC1mMmNhOGQ1Y2RjYjMuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.j40rM3O8QP_7obWRLgZZtaiMUUon1b0WpWB67aIa3tE');
+        }
+
+        h1 {
+            color: #2c3e50;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #e74c3c;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+
+        .course-container {
+            background-color: white;
+            border-radius: 1rem;
+            margin: 1rem;
+            opacity: 0.8;
+            box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+            padding: 2rem;
+            position: relative;
+            width: auto; /* Set width for two boxes in a row */
+        }
+    </style>
+</head>
+<body>
+    <div class="course-container">
+        <h1>{{ course_name }} - {{ quiz_name }} - Materials</h1>
+
+        <h2>Recommendation: Fantasy Content Theme</h2>
+
+        {% if learning_level == 'quick learner' %}
+            <p>Quick Learner Material: <a href="{{ materials.topper_material }}" class="button" target="_blank">View Material</a></p>
+        {% elif learning_level == 'average learner' %}
+            <p>Average Learner Material: <a href="{{ materials.average_learner_material }}" class="button" target="_blank">View Material</a></p>
+        {% elif learning_level == 'slow learner' %}
+            <p>Slow Learner Material: <a href="{{ materials.slow_learner_material }}" class="button" target="_blank">View Material</a></p>
+        {% endif %}
+    </div>
+</body>
+</html>

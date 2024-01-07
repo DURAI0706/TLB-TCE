@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Design Recommendation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-ezB7XiHRkgkg63pkmHlIvgZVFTpLiGgK5Pn5Vwgtfr6jUZ+8yVxRRRi/XqjxljhP" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+    
+    body {
+        font-family: 'Arial', sans-serif;
+        background-image: url('https://i.gifer.com/8eMu.gif');
+        background-size: cover;
+        color: #fff; /* Light text for better contrast */
+        margin: 0;
+        padding: 0;
+        background-repeat: no-repeat;        
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background-color: #333; /* Slightly darker container background */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); /* Soft glow effect */
+    }
+
+    h1 {
+        text-align: center;
+        color: #fff;
+    }
+
+    form {
+        margin-top: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    select, textarea {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        border: 2px solid #4caf50; /* Green border for an interactive feel */
+        border-radius: 8px;
+        background-color: #333;
+        color: #fff;
+        outline: 2px solid #1a73e8; /* Multicolor outline */
+    }
+
+    input[type="submit"] {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: background-color 0.3s ease; /* Smooth hover effect */
+    }
+
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    #fullscreen-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+    #fullscreen-image {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+    #close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+    /* Additional styles for the selected theme and image previews */
+    img {
+        display: block;
+        margin-top: 10px;
+        border-radius: 8px;
+        max-width: 100%;
+        height: auto;
+        outline: 2px solid #ffcc00; /* Yellow outline for images */
+    }
+
+    /* Styling for the game theme and image selection */
+    #FavoriteThemeImage,
+    #PointsDesignImage,
+    #BadgeDesignImage,
+    #LeaderboardDesignImage,
+    #LevelDesignImage,
+    #AppreciationAnimationImage {
+        border: 2px solid #4caf50; /* Green border for selected images */
+    }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Game Design Recommendation</h1>
+        <form action="{{ url_for('recommendation') }}" method="post">
+            <div class="form-group">
+                <label for="Gender">1) Gender:</label>
+                <select id="Gender" name="Gender" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="PlayFrequency">2) I typically play videogames / online games:</label>
+                <select id="PlayFrequency" name="PlayFrequency" required>
+                    <option value="Every day">Every day</option>
+                    <option value="Every week">Every week</option>
+                    <option value="Occasionally">Occasionally</option>
+                    <option value="Rarely">Rarely</option>
+                    <option value="Never">Never</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="PlayPreference">3) I prefer the following way of playing video/online games:</label>
+                <select id="PlayPreference" name="PlayPreference" required>
+                    <option value="Single Player Alone">Single Player Alone</option>
+                    <option value="Single Player with Other Player Helping">Single Player with Other Player Helping</option>
+                    <option value="Multiplayer">Multiplayer</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="ExploringHiddenTreasures">4) Exploring hidden treasures:</label>
+                <select id="ExploringHiddenTreasures" name="ExploringHiddenTreasures" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="FindingBehindLockedDoor">5) Finding what's behind a locked door:</label>
+                <select id="FindingBehindLockedDoor" name="FindingBehindLockedDoor" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="GivingHintToOthers">6) Giving Hint to others:</label>
+                <select id="GivingHintToOthers" name="GivingHintToOthers" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="PickingUpCollectibles">7) Picking up every single collectible in an area:</label>
+                <select id="PickingUpCollectibles" name="PickingUpCollectibles" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="ThirstToCrackChallenges">8) Thirst to crack more challenges:</label>
+                <select id="ThirstToCrackChallenges" name="ThirstToCrackChallenges" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="ImproveMyselfSelfCompeting">9) Improve myself by self competing:</label>
+                <select id="ImproveMyselfSelfCompeting" name="ImproveMyselfSelfCompeting" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="PlayingInAGroup">10) Playing in a group:</label>
+                <select id="PlayingInAGroup" name="PlayingInAGroup" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="CooperatingWithStrangers">11) Cooperating with strangers:</label>
+                <select id="CooperatingWithStrangers" name="CooperatingWithStrangers" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="ShareYourSuccess">12) Share your success with others:</label>
+                <select id="ShareYourSuccess" name="ShareYourSuccess" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="TakingOnStrongOpponent">13) Taking on a strong opponent when playing one to one match:</label>
+                <select id="TakingOnStrongOpponent" name="TakingOnStrongOpponent" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Getting100">14) Getting 100% (completing everything in a game) </label>
+                <select id="Getting100" name="Getting100" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Givingimportance">15) Giving more importance to achieving goals  </label>
+                <select id="Givingimportance" name="Givingimportance" required>
+                    <option value="Love It">Love It</option>
+                    <option value="Like It">Like It</option>
+                    <option value="Dislike It">Dislike It</option>
+                    <option value="Hate It">Hate It</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="UnderstandBetter">16) I understand something better after I:</label>
+                <select id="UnderstandBetter" name="UnderstandBetter" required>
+                    <option value="Try It Out">Try It Out</option>
+                    <option value="Think It Through">Think It Through</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="GroupProject">17) When I have to work on a group project, I first want to:</label>
+                <select id="GroupProject" name="GroupProject" required>
+                    <option value="Have 'group brainstorming' where everyone contributes ideas.">
+                        Have 'group brainstorming' where everyone contributes ideas.
+                    </option>
+                    <option value="Brainstorm individually and then come together as a group to compare ideas">
+                        Brainstorm individually and then come together as a group to compare ideas.
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="EasilyRemember">18) I more easily remember:</label>
+                <select id="EasilyRemember" name="EasilyRemember" required>
+                    <option value="Something I have done.">Something I have done.</option>
+                    <option value="Something I have thought a lot about.">Something I have thought a lot about.</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="LongCalculations">19) When I am doing long calculations:</label>
+                <select id="LongCalculations" name="LongCalculations" required>
+                    <option value="I tend to repeat all my steps and check my work carefully.">
+                        I tend to repeat all my steps and check my work carefully.
+                    </option>
+                    <option value="I find checking my work tiresome and have to force myself to do it.">
+                        I find checking my work tiresome and have to force myself to do it.
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="ReadingPreference">20) When I am reading for enjoyment, I like writers to:</label>
+                <select id="ReadingPreference" name="ReadingPreference" required>
+                    <option value="Clearly say what they mean.">Clearly say what they mean.</option>
+                    <option value="Say things in creative, interesting ways.">Say things in creative, interesting ways.</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="TaskPerformance">21) When I have to perform a task, I prefer to:</label>
+                <select id="TaskPerformance" name="TaskPerformance" required>
+                    <option value="Master one way of doing it.">Master one way of doing it.</option>
+                    <option value="Come up with new ways of doing it.">Come up with new ways of doing it.</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="DataPresentation">22) When someone is showing me data, I prefer:</label>
+                <select id="DataPresentation" name="DataPresentation" required>
+                    <option value="Charts or graphs.">Charts or graphs.</option>
+                    <option value="Text summarizing the results.">Text summarizing the results.</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="LearningPreference">23) When I am learning a new subject, I prefer to:</label>
+                <select id="LearningPreference" name="LearningPreference" required>
+                    <option value="Stay focused on that subject, learning as much about it as I can.">
+                        Stay focused on that subject, learning as much about it as I can.
+                    </option>
+                    <option value="Try to make connections between that subject and related subjects.">
+                        Try to make connections between that subject and related subjects.
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="InformationConsideration">24) When considering a body of information, I am more likely to:</label>
+                <select id="InformationConsideration" name="InformationConsideration" required>
+                    <option value="Focus on details and miss the big picture.">
+                        Focus on details and miss the big picture.
+                    </option>
+                    <option value="Try to understand the big picture before getting into the details.">
+                        Try to understand the big picture before getting into the details.
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="MathProblemSolving">25) When I solve math problems:</label>
+                <select id="MathProblemSolving" name="MathProblemSolving" required>
+                    <option value="I usually work my way to the solutions one step at a time.">
+                        I usually work my way to the solutions one step at a time.
+                    </option>
+                    <option value="I often just see the solutions but then have to struggle to figure out the steps to get to them.">
+                        I often just see the solutions but then have to struggle to figure out the steps to get to them.
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="VideogameStories">26) My attitude to videogame stories is:</label>
+                <select id="VideogameStories" name="VideogameStories" required>
+                    <option value="Stories help me enjoy a videogame.">Stories help me enjoy a videogame.</option>
+                    <option value="Stories are not important to me in videogames.">Stories are not important to me in videogames.</option>
+                    <option value="I prefer videogames without stories.">I prefer videogames without stories.</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="TimeBoundChallenges">27) Do you like to do time-bound challenges?</label>
+                <select id="TimeBoundChallenges" name="TimeBoundChallenges" required>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="FavoriteTheme">28) Choose a theme you like the most:</label>
+                <select id="FavoriteTheme" name="FavoriteTheme" required onchange="updateImage('FavoriteThemeImage', this)">
+                    <option value="" disabled selected>Select a theme</option>
+                    <option value="Nature connected"
+                        data-image="https://previews.123rf.com/images/mbgraphicdesign/mbgraphicdesign2304/mbgraphicdesign230404220/202975370-beautiful-nature-wallpaper-illustration-for-your-project-needs.jpg">
+                        Nature connected
+                    </option>
+                    <option value="Fantasy"
+                        data-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwAsKhIHJoFue9L5xzMltYM_yYJ_KxLvGHvZRB4NxZxs4isVBzG1MuvvmJLM8b-lJwHfU&usqp=CAU">
+                        Fantasy
+                    </option>
+                    <option value="Horror"
+                        data-image="https://img.freepik.com/premium-photo/spooky-foggy-forest_238683-1845.jpg">Horror
+                    </option>
+                </select>
+                <img id="FavoriteThemeImage" src="" alt="Please select a theme to see the image" style="max-width: 100px; max-height: 100px; margin-top: 10px;">
+                <a id="ViewImageLink1" href="#" style="display: none;" onclick="viewFullImage('FavoriteThemeImage')">Click here to view in full size</a>
+            </div>
+            
+            <div class="form-group">
+                <label for="PointsDesign">29) Which design of points you like the most?</label>
+                <select id="PointsDesign" name="PointsDesign" required onchange="updateImage('PointsDesignImage', this)">
+                    <option value="" disabled selected>Select a design</option>
+                    <option value="1" data-image="https://www.shutterstock.com/image-photo/cryptocurrency-bitcoin-ethereum-coins-on-600nw-2159568655.jpg">
+                        1
+                    </option>
+                    <option value="2" data-image="https://www.shutterstock.com/image-vector/game-icon-bag-gold-coins-600w-237845674.jpg">
+                        2
+                    </option>
+                    <option value="3" data-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCLhmSYV5x8gwVEdN6Rw2d2aCWedLuClmUwLx_f6tNkjiQfklPy-GNoawtcOfwOjhSLIQ&usqp=CAU">
+                        3
+                    </option>
+                </select>
+                <img id="PointsDesignImage" src="" alt="Selected Points Design Image" style="max-width: 100px; max-height: 100px; margin-top: 10px;">
+                <a id="ViewImageLink2" href="#" style="display: none;" onclick="viewFullImage('PointsDesignImage')">Click here to view in full size</a>
+            </div>
+
+            <div class="form-group">
+                <label for="BadgeDesign">30) If you cross an important milestone in a game, Which design of Badges you like the most?</label>
+                <select id="BadgeDesign" name="BadgeDesign" required onchange="updateImage('BadgeDesignImage', this)">
+                    <option value="" disabled selected>Select a design</option>
+                    <option value="3" data-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkJaAS8oLQhLkR6fZ9OSCsxixituqJeC_0I3IxI5IB_gCVixfWscZ71SG1BiiN3bXMLJ8&usqp=CAU">3</option>
+                    <option value="4" data-image="https://img.freepik.com/premium-vector/precious-stones-gold-silver-frames-medieval-style-badges-with-star-fantasy-frame_76964-6815.jpg?size=338&ext=jpg&ga=GA1.1.1826414947.1699833600&semt=ais">4</option>
+                    <option value="5" data-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvMzdbg7N_UkMYHlWf9J7a_gssDi2Sin8H3AjUuPvsVJENr5wFZkjU879itTa-G26D7uY&usqp=CAU">5</option>
+                    <option value="6">I do not wish for any badges</option>
+                </select>
+                <img id="BadgeDesignImage" src="" alt="Selected Badge Design Image"
+                    style="max-width: 100px; max-height: 100px; margin-top: 10px;">
+            </div>
+
+            <div class="form-group">
+                <label for="LeaderboardDesign">31) If you want a leaderboard for your game scores, which of the designs you
+                    like the most?</label>
+                <select id="LeaderboardDesign" name="LeaderboardDesign" required
+                    onchange="updateImage('LeaderboardDesignImage', this)">
+                    <option value="" disabled selected>Select a design</option>
+                    <option value="1" data-image="https://static.wikia.nocookie.net/hayday/images/0/0b/Champions_League_Leaderboard.png/revision/latest?cb=20151130094708">1</option>
+                    <option value="2" data-image="https://preview.redd.it/i-made-a-web-app-to-review-opponent-in-clash-v0-u2a3jz2mwybb1.png?width=1830&format=png&auto=webp&s=412365761ce3d2931225590f70b272ca7cac1c70">2</option>
+                    <option value="3" data-image="https://img.freepik.com/free-vector/cartoon-leaderboard-with-rankings_23-2148749417.jpg">3</option>
+                    <option value="5">I do not need a leaderboard</option>
+                </select>
+                <img id="LeaderboardDesignImage" src="" alt="Selected Leaderboard Design Image"
+                    style="max-width: 100px; max-height: 100px; margin-top: 10px;">
+            </div>
+
+            <div class="form-group">
+                <label for="LevelDesign">32) When you want to monitor your progress in a game and unlock the next level, Which design of levels you like the most?</label>
+                <select id="LevelDesign" name="LevelDesign" required onchange="updateImage('LevelDesignImage', this)">
+                    <option value="" disabled selected>Select a design</option>
+                    <option value="5" data-image="https://www.google.com/url?sa=i&url=https%3A%2F%2Fdribbble.com%2Fshots%2F1968531-Game-Map&psig=AOvVaw1LIYEScEdsdX2LlzTgbEU5&ust=1702301539269000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCOjay879hIMDFQAAAAAdAAAAABAD">5</option>
+                    <option value="2" data-image="https://assets.materialup.com/uploads/8ebf6a8e-c1aa-4b76-8e74-4e383ca30d11/attachment.gif">2</option>
+                    <option value="1" data-image="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/f5c32991091173.5e288d6bc7fd2.gif">1</option>
+                    <option value="6">I do not want any special indication for levels</option>
+                </select>
+                <img id="LevelDesignImage" src="" alt="Selected Level Design Image"
+                    style="max-width: 100px; max-height: 100px; margin-top: 10px;">
+            </div>
+
+            <div class="form-group">
+                <label for="AppreciationAnimation">33) Which Appreciation Animation would you like to have when you complete
+                    a task?</label>
+                <select id="AppreciationAnimation" name="AppreciationAnimation" required
+                    onchange="updateImage('AppreciationAnimationImage', this)">
+                    <option value="" disabled selected>Select a design</option>
+                    <option value="1" data-image="https://i.pinimg.com/originals/55/9e/d1/559ed1853492bb098f75690c1d541551.gif">1</option>
+                    <option value="2" data-image="https://i.pinimg.com/originals/b3/cb/5a/b3cb5a293121ae02d73aa5fc173f2a1d.gif">2</option>
+                    <option value="3" data-image="https://i.pinimg.com/originals/eb/d1/01/ebd101ec767df42dfa60122e17300d02.gif">3</option>
+                </select>
+                <img id="AppreciationAnimationImage" src="" alt="Selected Appreciation Animation Image"
+                    style="max-width: 100px; max-height: 100px; margin-top: 10px;">
+            </div>
+
+            <div class="form-group">
+                <label for="GameElementsInLMS">34) Do you love it if you see these many game elements into your Learning
+                    Management System?</label>
+                <select id="GameElementsInLMS" name="GameElementsInLMS" required>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+
+
+            <div class="form-group">
+                <input type="submit"  value="Get Recommendation">
+            </div>
+        </form>
+        <script>
+            function updateImage(imageId, selectElement) {
+                var selectedOption = selectElement.options[selectElement.selectedIndex];
+                var imageUrl = selectedOption.getAttribute('data-image');
+                var imageElement = document.getElementById(imageId);
+                imageElement.src = imageUrl;
+        
+                // Show the respective view image link
+                var viewImageLink = document.getElementById('ViewImageLink' + imageId.charAt(imageId.length - 1));
+                viewImageLink.style.display = 'inline';
+            }
+        
+            function viewFullImage(imageId) {
+                var imageSrc = document.getElementById(imageId).src;
+                document.getElementById("fullscreen-image").src = imageSrc;
+                document.getElementById("fullscreen-overlay").style.display = "flex";
+            }
+        
+            function closeFullscreen() {
+                document.getElementById("fullscreen-overlay").style.display = "none";
+            }
+        </script>        
+    </div>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Assignment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Submit Materials</title>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        select,
+        input,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            color: #4caf50;
+            font-weight: bold;
+        }
+        aside {
+        width: 250px;
+        max-height: 100vh;
+        min-height: 100vh;
+        border-right: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+        background-color: #f6f6f6;
+        position: fixed;
+        left: 0;
+        top: 0;
+      }
+
+      aside > .logo {
+        height: 80px;
+        color: var(--accent-color);
+        display: flex;
+        align-items: center;
+      }
+
+      aside > .logo > h1 {
+        margin: 0;
+        margin-left: 1rem;
+      }
+
+      aside > ul {
+        min-height: 70vh;
+        border-top: 1px solid #dddddd;
+        border-bottom: 1px solid #dddddd;
+        list-style: none;
+        display: flex;
+        gap: 1rem;
+        flex-direction: column;
+        padding: 1rem;
+        border-top-right-radius: 0.5rem;
+      }
+
+      aside > ul > li {
+        padding: 0.8rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 500ms cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      aside > ul > li > a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      aside > ul > li:hover {
+        background-color: rgba(129, 158, 245, 0.758);
+        color: #eee;
+      }
+
+      /* Admin Profile Button*/
+      #Adminprofile,
+      #Logout {
+        background-color: #d64141;
+        color: white;
+        display: flex;
+        margin: 1rem auto;
+        padding: 1rem;
+        border-radius: 1rem;
+        cursor: pointer;
+        transition: all 200ms cubic-bezier(0.215, 0.61, 0.355, 1);
+      }
+
+      #Adminprofile > a,
+      #Logout > a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        gap: 0.6rem;
+      }
+
+      #Logout {
+        background-color: #dddddd;
+        width: 200px;
+        margin-block: 0.2rem;
+      }
+
+      #Logout:hover {
+        background-color: #d64141;
+        color: white;
+      }
+
+
+      #mycourses {
+        background-color: #eee;
+        min-width: calc(100vw - 250px);
+        min-height: 100vh;
+        margin-left: 250px;
+        display: flex;
+        flex-direction: column;
+        padding: 3rem 4rem;
+      }
+
+      #mycourses > h1 {
+        margin: 2rem;
+      }
+
+      #Adminprofile {
+        background-color: #eee;
+        color: #222;
+        display: flex;
+        margin: auto;
+        padding: 1rem;
+        border-radius: 1rem;
+        cursor: pointer;
+        transition: all 200ms cubic-bezier(0.215, 0.61, 0.355, 1);
+      }
+
+      #Adminprofile > a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        gap: 0.6rem;
+      }
+
+      #AdminSettings {
+        background-color: #eee;
+        min-width: calc(100vw - 250px);
+        min-height: 100vh;
+        margin-left: 250px;
+        display: flex;
+        flex-direction: column;
+        padding: 3rem 4rem;
+      }
+
+      #AdminSettings > h1 {
+        margin: 2rem;
+      }
+    </style>
+</head>
+<body>
+      <h1>Submit Materials</h1>
+    
+      {% if success_message %}
+          <p>{{ success_message }}</p>
+      {% endif %}
+  
+      <form method="POST" action="{{ url_for('submit_materials') }}">
+          <label for="materialTitle">Material Title:</label>
+          <input type="text" name="materialTitle" id="materialTitle" placeholder="Enter material title" required>
+  
+          <label for="slowLearnerMaterial">Slow Learner Material:</label>
+          <textarea name="slowLearnerMaterial" placeholder="Enter slow learner material" required></textarea>
+  
+          <label for="topperMaterial">Topper Material:</label>
+          <textarea name="topperMaterial" placeholder="Enter topper material" required></textarea>
+  
+          <label for="averageLearnerMaterial">Average Learner Material:</label>
+          <textarea name="averageLearnerMaterial" placeholder="Enter average learner material" required></textarea>
+  
+          <button type="submit">Submit Materials</button>
+      </form>
+  </body>
+  </html>

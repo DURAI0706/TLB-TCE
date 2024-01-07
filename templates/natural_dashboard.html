@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-image: url('https://i.pinimg.com/originals/6c/15/7a/6c157a668c99422c8b81348cc447ba89.gif');
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .top-left-icon {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    #menuIconImage {
+      width: 40px;
+      height: 40px;
+    }
+
+    div.content {
+      margin-left: 200px;
+      padding: 1px 16px;
+      height: 1000px;
+    }
+
+
+    .logo {
+      text-align: center;
+    }
+
+    .logo h1 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+
+    .material-symbols-outlined {
+      margin-right: 10px;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin-left: 160px; /* Same as the width of the sidenav */
+      padding: 0px 10px;
+    }
+
+    #AdminSettings {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 71, 170, 0.927);
+      opacity: 0.7;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .pictureWrapper {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .pictureWrapper img {
+      border-radius: 50%;
+      margin-right: 20px;
+    }
+
+    .name {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    .jobTitle {
+      color: #777;
+    }
+
+    .personalInformation {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .personalInformation_info {
+      margin-bottom: 15px;
+    }
+
+    span {
+      font-weight: bold;
+      color: #777;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .top-right-icons {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      z-index: 2;
+    }
+
+    .icon-container {
+      position: relative;
+      cursor: pointer;
+      margin-left: 10px;
+      overflow: hidden;
+      width: 80px;
+      height: 80px;
+    }
+
+    .icon {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+
+    .icon-count {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: red;
+      color: white;
+      padding: 5px;
+      border-radius: 50%;
+      font-size: 16px; /* Increase the font size for better visibility */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sidebar {
+      height: 100%;
+      width: 160px;
+      position: fixed;
+      z-index: 1;
+      opacity: 0.8;
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      padding-top: 16px;
+    }
+
+    .sidebar a {
+      padding: 6px 8px 6px 16px;
+      text-decoration: none;
+      font-size: 20px;
+      color: #818181;
+      display: block;
+    }
+
+    .sidebar a:hover {
+      color: #f1f1f1;
+    }
+    
+    @media screen and (max-height: 450px) {
+      .sidebar {padding-top: 15px;}
+      .sidebar a {font-size: 18px;}
+    }
+    
+  </style>
+</head>
+
+<body>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const sidebar = document.querySelector('.sidebar');
+      const menuIcon = document.getElementById('menuIcon');
+  
+      // Open the sidebar on clicking the top-left icon
+      menuIcon.addEventListener('click', function () {
+        sidebar.style.width = sidebar.style.width === '200px' ? '0' : '200px';
+      });
+      // Toggle the expanded class for the icons in the top right corner
+      const icons = document.querySelectorAll('.icon-container');
+  
+      icons.forEach(icon => {
+        icon.addEventListener('click', () => {
+          icons.forEach(otherIcon => {
+            if (otherIcon !== icon) {
+              otherIcon.classList.remove('expanded');
+            }
+          });
+  
+          icon.classList.toggle('expanded');
+        });
+      });
+    });
+  </script>
+  
+  <div class="top-left-icon" id="menuIcon">
+    <img src="https://i.pinimg.com/originals/b9/67/d1/b967d1e281bd0aaca615e889386b0496.gif" alt="Menu" class="icon" id="menuIconImage">
+  </div>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <br><br><br><br>
+      <a href="{{ url_for('user_profile') }}"><i class="fa fa-fw fa-home"></i> Home</a>
+      <br><br>
+      <a href="{{ url_for('student_courses') }}"><i class="fa fa-fw fa-graduation-cap"></i> Courses</a>
+      <br><br>
+      <a href="#teachers"><i class="fa fa-fw fa-users"></i> Teachers</a>
+      <br><br>
+      <a href="#leaderboard"><i class="fa fa-fw fa-trophy"></i> Leaderboard</a>
+      <br><br>
+      <a href="#contact"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+      <br><br>
+      <a href="{{ url_for('slogout') }}" style="color: #ff4444; position: absolute; bottom: 20px;"><i class="fa fa-fw fa-sign-out"></i> Logout</a>
+    </div>
+  </div>
+  
+    <!-- Main content -->
+    <main>
+      <div id="AdminSettings">
+        <h1>Student Dashboard</h1>
+        <!-- Teacher Profile Information -->
+        <div class="pictureWrapper">
+          <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT-_32E8Y5sA8XzwK2mLFdRBIrtkOmZTWQuMhkGqr491l_dSTco"
+            alt="Teacher">
+          <div>
+            <span class="name">{{ student_data.name }}</span>
+            <span class="jobTitle">{{ student_data.role }}</span>
+          </div>
+        </div>
+        <!-- Personal Information -->
+        <div class="personalInformation">
+          <div class="personalInformation_info">
+            <span>EMAIL</span>
+            <p>{{ student_data.email }}</p>
+          </div>
+          <div class="personalInformation_info">
+            <span>DEPARTMENT</span>
+            <p>{{ student_data.department }}</p>
+          </div>
+          <div class="personalInformation_info">
+            <span>Roll Number</span>
+            <p>{{ student_data.roll_number }}</p>
+          </div>
+          <div class="personalInformation_info">
+            <span>Register Number</span>
+            <p>{{ student_data.register_number }}</p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Top-right icons -->
+    <div class="top-right-icons">
+      <div class="icon-container" id="keysIconContainer">
+        <img src="https://cdnb.artstation.com/p/assets/images/images/061/088/235/original/dariusz-nowak-brown-6.gif?1679996222" alt="Keys" class="icon" id="keysIcon">
+        <div class="icon-count" id="keysCount">{{ student_data.get('total_keys', 0) }}</div>
+      </div>
+      <div class="icon-container" id="lifeIconContainer">
+        <img src="https://i.pinimg.com/originals/b3/4c/fc/b34cfc79627ee61b72374e08d05bea1b.gif" alt="Points"
+          class="icon" id="lifeCount">
+        <div class="icon-count" id="lifeCount">{{ student_data.get('total_heart', 0) }}</div>
+      </div>
+      <div class="icon-container" id="pointsIconContainer">
+        <img src="https://media.tenor.com/s1dqsQPPpEMAAAAj/moneda.gif" alt="Points"
+          class="icon" id="pointsIcon">
+        <div class="icon-count" id="pointsCount">{{ student_data.get('total_coins', 0) }}</div>
+      </div>
+
+    </div>
+  </div>
+  
+</body>
+
+</html>

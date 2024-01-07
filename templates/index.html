@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Website</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            transition: opacity 1s ease-out; /* Add a transition for smooth content fade-in */
+        }
+
+        nav {
+            background-color: #213c71;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        nav h2 {
+            margin: 0;
+            color: white;
+            font-size: 24px;
+            line-height: 70px;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            height: 70px;
+            justify-content: space-between;
+        }
+
+        nav button {
+            font-size: 13px;
+            line-height: 0.7;
+            letter-spacing: 1.7px;
+            border: 1px solid transparent;
+            padding: 15px;
+            background-color: #2262a7;
+            color: white;
+            margin-bottom: 0px;
+            right: 49px;
+            border-radius: 13px;
+            position: absolute;
+        }
+
+        nav button a {
+            color: white;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        nav button:hover {
+            background-color: #459da0;
+            animation: gamificationAnimation 0.5s ease-in-out infinite;
+        }
+
+        .section {
+            text-align: center;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .section p {
+            font-size: 16px;
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .image-section img {
+            width: 100%;
+            height: auto;
+            max-width: 1800px;
+            max-height: 800px;
+            margin-bottom: 20px;
+        }
+
+        /* Additional styles for the third section */
+        .third-section {
+            background-color: #FAFAFA;
+            text-align: center;
+        }
+
+        .third-section img {
+            width: 100%;
+            height: auto;
+            max-width: 1800px;
+            max-height: 800px;
+            margin-bottom: 20px;
+        }
+
+        .third-section h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .third-section .red.box {
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        .third-section .red.box:nth-child(2) {
+            width: 72%;
+            margin-top: 25px;
+            margin: 0 auto;
+        }
+
+        .third-section .mt-1,
+        .third-section .mt-2 {
+            text-align: left;
+            font-family: 'inter';
+        }
+
+        .third-section .mt-1 {
+            color: #8A8A8A;
+            font-size: 19px;
+        }
+
+        .third-section .mt-2 {
+            font-family: 'inter';
+        }
+
+        /* Additional styles for login button animation */
+        @keyframes gamificationAnimation {
+            0% {
+                transform: translateY(0);
+            }
+            25% {
+                transform: translateY(-5px);
+            }
+            50% {
+                transform: translateY(5px);
+            }
+            75% {
+                transform: translateY(-3px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* Additional styles for login animation */
+        @keyframes loginAnimation {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-animation {
+            animation: loginAnimation 1s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <h2>Welcome to Our Educational Platform</h2>
+            <button class="login-button"><a href="/role" class="login-animation">Login</a></button>
+            <!-- Add other navigation links here -->
+        </ul>
+    </nav>
+    <div class="section image-section">
+        <img src="https://static.vecteezy.com/system/resources/previews/012/725/732/non_2x/gamification-of-learning-word-concepts-dark-blue-banner-education-innovation-infographics-with-icons-on-color-background-isolated-typography-illustration-with-text-vector.jpg" alt="Section 1 Image">
+        <h1>Learn more about our educational platform and our mission to provide quality education to everyone.</h1>
+    </div>
+    <div class="section image-section">
+        <img src="https://d33wubrfki0l68.cloudfront.net/189f05751429b0fcedeff7a4003fadf273a7aace/ba1e3/static/eeed613966370ca6149479950ffcec44/1cfc2/8-ways-you-may-use-gamification-for-your-education-app.png" alt="Section 1 Image">
+    </div>
+    <div class="section third-section">
+        <img src="https://www.creativeeye-me.com/images/banner-contact1.jpg" alt="Section 1 Image">
+        <h2>Get in touch!</h2>
+        <div class="red box border-standard">
+            <div class="mt-1 ml-3">Call Us</div>
+            <div class="mt-2 ml-3">+91 6366 937 197</div>
+        </div><br><br>
+        <div class="red box border-standard">
+            <div class="mt-1 ml-3">Email Us</div>
+            <div class="mt-2 ml-3">mahatmaela@mahatmaschools.com</div>
+        </div>
+    </div>
+<!-- Add this JavaScript code to the end of the <script> tag in index.html -->
+    <script>
+        // JavaScript to add a class when the login link is clicked
+        document.querySelector('.login-button a').addEventListener('click', function(event) {
+            // Prevent the default behavior of the link (i.e., navigating to the href)
+            event.preventDefault();
+            
+            // Add the login-animation class to the body
+            document.body.classList.add('login-animation');
+            
+            // Redirect to the role page after a delay (adjust the delay time as needed)
+            setTimeout(function() {
+                window.location.href = '/role';  // Change the URL to the desired role page
+            }, 1000);  // 1000 milliseconds (1 second) delay
+        });
+    </script>
+    
+</body>
+</html>

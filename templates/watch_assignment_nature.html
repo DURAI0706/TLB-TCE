@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Assignment - Nature Theme</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-image: url('https://i.pinimg.com/originals/6c/15/7a/6c157a668c99422c8b81348cc447ba89.gif');
+        }
+
+        h1 {
+            color: #33ffa3;
+            margin-bottom: 20px;
+        }
+
+        div {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #918787;
+            padding: 20px;
+            border-radius: 10px;
+            opacity: 0.8;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff5733;
+        }
+
+        li,h3 {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #444;
+            color: #fff;
+            border: 1px solid #666;
+            border-radius: 5px;
+            width: auto;
+        }
+
+        .edit-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: inline-block; /* Added for inline alignment */
+            margin-bottom: 10px; /* Added for spacing */
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Nature Theme Assignment</h1>
+        <h2>Question: {{ question }}</h2>
+        
+        <h2>User Answers:</h2>
+        <ul>
+            {% for answer in user_answers %}
+                <a class="edit-button" href="{{ answer }}">View Material</a>    
+            {% endfor %}
+        </ul>
+    </div>
+    <h3>Assessment Mark: {{ assessment_mark }}</h3>
+</body>
+</html>

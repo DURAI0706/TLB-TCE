@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            background-color: #1b1b1b;
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevents horizontal scrollbar */
+            background-image: url('https://d.furaffinity.net/art/cyber-ogurchik/1631110730/1631110730.cyber-ogurchik_image__7_.gif'); /* Replace 'your-background-image-url.jpg' with your actual image URL */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.8); /* Add transparency to the container */
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            margin: 100px auto;
+            padding: 50px;
+            position: relative;
+            width: 400px;
+        }
+        h1 {
+            color: #1b1b1b;
+            font-size: 30px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        input[type="text"],
+        input[type="password"],
+        select,
+        input[type="email"],
+        input[type="submit"] {
+            background-color: #f2f2f2;
+            border: none;
+            border-radius: 5px;
+            box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.1);
+            color: #1b1b1b;
+            font-size: 16px;
+            margin-bottom: 20px;
+            padding: 15px;
+            width: 100%;
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus,
+        input[type="email"]:focus {
+            box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+        input[type="submit"] {
+            background-color: #1b1b1b;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 15px;
+            text-transform: uppercase;
+            width: 100%;
+            transition: background-color 0.3s ease-in-out;
+        }
+        input[type="submit"]:hover {
+            background-color: #333;
+        }
+        .signup {
+            color: #1b1b1b;
+            font-size: 14px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .signup a {
+            color: #1b1b1b;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out;
+        }
+        .signup a:hover {
+            text-decoration: underline;
+            color: #ff4500;
+        }
+        .animation {
+            background-color: #ff4500;
+            border-radius: 50%;
+            height: 100px;
+            left: -50px;
+            position: absolute;
+            top: -50px;
+            width: 100px;
+            animation: rotate 2s linear infinite, fadeIn 1s ease-out;
+            display: none; /* Initially hidden */
+        }
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<div class="container">
+    <div class="animation"></div>
+    <h1>Teacher Login</h1>
+    <form id="loginForm" action="/teacherlogin" method="POST">
+        <div class="input-field">
+            <i class="fa fa-envelope"></i>
+            <input type="text" name="email" placeholder="Enter your Email (must end with tce.edu)">
+        </div>
+        <div class="input-field">
+            <i class="fa fa-lock"></i>
+            <input type="password" name="password" placeholder="Enter your password">
+        </div>
+        <input type="submit" value="Login">
+    </form>
+    <div id="pinModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePinModal()">&times;</span>
+            <h2>Enter PIN to Sign Up</h2>
+            <form onsubmit="return checkPin()" id="pinForm">
+                <label for="pin">PIN:</label>
+                <input type="text" id="pin" name="pin" maxlength="6" required>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+</div>
+    <script>
+        function toggleForms() {
+            document.getElementById('loginForm').style.display = 'none';
+        }
+        const animatedInputs = document.querySelectorAll('input, select');
+        animatedInputs.forEach(input => {
+            input.addEventListener('focus', function () {
+                this.classList.add('focused');
+            });
+            input.addEventListener('blur', function () {
+                if (!this.value) {
+                    this.classList.remove('focused');
+                }
+            });
+        });
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+        });
+        document.getElementById('registerForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            document.querySelector('.animation').style.display = 'block';
+            setTimeout(function () {
+                window.location.href = '/teacherdashboard'; 
+            }, 3000); 
+        });
+        function showPinModal() {
+            document.getElementById('pinModal').style.display = 'block';
+        }
+        function closePinModal() {
+            document.getElementById('pinModal').style.display = 'none';
+        }
+        function checkPin() {
+            var enteredPin = document.getElementById('pin').value;
+            if (enteredPin === '123456') {
+                closePinModal();
+                window.location.href = '/teacherregister';
+            } else {
+                alert('Invalid PIN. Please try again.');
+            }
+            return false;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Submit Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    <style>
+      :root {
+        --main-color: black;
+        --accent-color: royalblue;
+        --bkg-color: white;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+      }
+
+      .container {
+        min-height: 100vh;
+        min-width: 100vw;
+        display: flex;
+      }
+
+      #mycourses {
+        background-color: #eee;
+        min-width: calc(100vw - 250px);
+        min-height: 100vh;
+        margin-left: 250px;
+        display: flex;
+        flex-direction: column;
+        padding: 3rem 4rem;
+      }
+
+      #mycourses > h1 {
+        margin: 2rem;
+      }
+
+      aside {
+        width: 250px;
+        max-height: 100vh;
+        min-height: 100vh;
+        border-right: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+        background-color: #f6f6f6;
+        position: fixed;
+        left: 0;
+        top: 0;
+      }
+
+      aside > .logo {
+        height: 80px;
+        color: var(--accent-color);
+        display: flex;
+        align-items: center;
+      }
+
+      aside > .logo > h1 {
+        margin: 0;
+        margin-left: 1rem;
+      }
+
+      aside > ul {
+        min-height: 70vh;
+        border-top: 1px solid #dddddd;
+        border-bottom: 1px solid #dddddd;
+        list-style: none;
+        display: flex;
+        gap: 1rem;
+        flex-direction: column;
+        padding: 1rem;
+        border-top-right-radius: 0.5rem;
+      }
+
+      aside > ul > li {
+        padding: 0.8rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 500ms cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      aside > ul > li > a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      aside > ul > li:hover {
+        background-color: rgba(129, 158, 245, 0.758);
+        color: #eee;
+      }
+
+      /* Admin Profile Button*/
+      #Adminprofile,
+      #Logout {
+        background-color: #d64141;
+        color: white;
+        display: flex;
+        margin: 1rem auto;
+        padding: 1rem;
+        border-radius: 1rem;
+        cursor: pointer;
+        transition: all 200ms cubic-bezier(0.215, 0.61, 0.355, 1);
+      }
+
+      #Adminprofile > a,
+      #Logout > a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        gap: 0.6rem;
+      }
+
+      #Logout {
+        background-color: #dddddd;
+        width: 200px;
+        margin-block: 0.2rem;
+      }
+
+      #Logout:hover {
+        background-color: #d64141;
+        color: white;
+      }
+
+      /* Admin Profile Button*/
+
+      /* Admin Page section*/
+      #AdminSettings {
+        background-color: #eee;
+        min-width: calc(100vw - 250px);
+        min-height: 100vh;
+        margin-left: 250px;
+        display: flex;
+        flex-direction: column;
+        padding: 3rem 4rem;
+      }
+
+      #AdminSettings > h1 {
+        margin: 2rem 0;
+      }
+
+
+      #Dialog,
+      #InfoDialog {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        border: 1px solid #eee;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      }
+
+      #Dialog h4 {
+        font-size: larger;
+        margin: 1rem;
+      }
+
+      #Dialog button {
+        width: 30%;
+        padding: 0.2rem;
+        font-size: 17px;
+      }
+
+      #Dialog > form > .buttons {
+        display: flex;
+        justify-content: end;
+        gap: 1rem;
+      }
+
+      #Dialog::backdrop {
+        background-color: #22222289;
+      }
+
+      #InfoDialog > form > .buttons > button {
+        padding: 0.3rem 1rem;
+        font-size: larger;
+      }
+
+      .addcourse_wrapper {
+        position: relative;
+        background-color: white;
+        padding: 2rem 1rem;
+        border-radius: 1rem;
+        margin: 1rem;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+      }
+
+      #addCourse {
+        width: 10rem;
+        background-color: royalblue;
+        color: #fff;
+        padding: 1rem;
+        border-radius: 2rem;
+        margin-inline: auto;
+        display: grid;
+        place-content: center;
+        margin-block: 1rem;
+        cursor: pointer;
+      }
+
+      #addCourse:hover {
+        background-color: rgba(65, 105, 225, 0.731);
+      }
+
+      #addCourse > a {
+        text-decoration: none;
+        color: #fff;
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        padding: 2rem;
+      }
+
+      form > label {
+        color: #222;
+        margin-bottom: 0.5rem;
+      }
+
+      form > input,
+      select {
+        font-size: 1.1rem;
+        padding: 0.3rem;
+        border: 1px solid #dadada;
+        border-radius: 0.2rem;
+        width: 100%;
+      }
+
+      form > textarea {
+        font-size: 1.1rem;
+        font-family: 'Poppins';
+        padding: 0.3rem;
+        resize: none;
+        border-radius: 0.2rem;
+        height: 16rem;
+        border: 1px solid #dadada;
+        width: 100%;
+      }
+
+      form > input[type="number"] {
+        width: 50%;
+      }
+
+      main {
+        position: relative;
+      }
+
+      form .time-input {
+        display: flex;
+        align-items: center;
+      }
+
+      form .time-input input {
+        width: 30%;
+        margin: 0 5px;
+      }
+
+      .addBtn {
+        background-color: #4caf50;
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-top: 1rem;
+      }
+      
+      /* Styles for badges dropdown and boxes */
+      form > label[for="badges"] {
+        color: #222;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+
+      form > select[name="badges"] {
+        font-size: 1.1rem;
+        padding: 0.3rem;
+        border: 1px solid #dadada;
+        border-radius: 0.2rem;
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+
+      #badgesContainer {
+        display: none;
+        margin-top: 1rem;
+      }
+
+      .badge-box {
+        background-color: #eee;
+        padding: 1rem;
+        border-radius: 0.2rem;
+        margin-bottom: 1rem;
+      }
+
+      .badge-box label {
+        color: #222;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+
+      .badge-box input {
+        font-size: 1.1rem;
+        padding: 0.3rem;
+        border: 1px solid #dadada;
+        border-radius: 0.2rem;
+        width: 100%;
+      }
+
+      .badge-box img {
+        width: 50px; /* Adjust the width as needed */
+        height: 50px; /* Adjust the height as needed */
+        border: 1px solid #ccc; /* Optional: Add a border for better visualization */
+        margin-right: 10px; /* Optional: Add some margin for spacing */
+        object-fit: cover; /* Ensure the image maintains its aspect ratio and covers the entire container */
+        border-radius: 50%; /* Optional: Apply border-radius for a circular appearance */
+      }
+      .alert {
+        background-color: #4caf50; /* Green background color */
+        color: white; /* White text color */
+        padding: 1rem; /* Padding around the content */
+        margin-bottom: 1rem; /* Bottom margin for spacing */
+        border-radius: 0.5rem; /* Rounded corners */
+        text-align: center; /* Center-align the text */
+      }
+
+      .alert a {
+        color: #fff; /* White text color for the link */
+        text-decoration: underline; /* Underline for better visibility */
+        margin-left: 1rem; /* Left margin for spacing from the success message */
+      }
+
+      .alert a:hover {
+        color: #fff; /* White text color on hover */
+        text-decoration: none; /* Remove underline on hover */
+      }
+      .course-container {
+        background-color: white;
+        border-radius: 1rem;
+        margin: 1rem;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+        padding: 2rem;
+        position: relative;
+        width: calc(60% - 2rem); /* Set width for two boxes in a row */
+      }
+
+      .course-container h2 {
+        color: var(--accent-color);
+        margin-bottom: 1rem;
+      }
+    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>   
+
+<body>
+  <div class="container">
+      <aside>
+        <ul>
+          <li>
+            <a href="{{ url_for('my_courses') }}">My Courses</a>
+          </li>
+          <li>
+            <a href="{{ url_for('create_course') }}">Add Courses</a>
+          </li>
+        </ul>
+        <div id="Adminprofile">
+          <a href="{{ url_for('teacherdashboard') }}">
+            <span class="material-symbols-outlined">manage_accounts</span>
+            <span>My Profile Setting</span>
+          </a>
+        </div>
+        <div id="Logout">
+          <a href="{{ url_for('tlogout') }}">
+            <span class="material-symbols-outlined">logout</span>
+            <span>Logout</span>
+          </a>
+        </div>
+      </aside>
+      <div id="mycourses">
+        <h1>Add New Quiz For {{ course_name }}</h1>
+        <div class="addcourse_wrapper">
+          <form method="post" action="{{ url_for('give_quiz', course_name=course_name) }}" enctype="multipart/form-data">
+            <!-- Add this block of code in your HTML form -->
+            <label for="courseName">Course Name:</label>
+            <input type="text" id="courseName" name="courseName" value="{{ course_name }}" readonly>
+            <label for="quizName">Quiz Name:</label>
+            <input type="text" id="quizName" name="quizName" required>
+            <label for="timer">Timer (minutes):</label>
+            <input type="number" id="timer" name="timer" required>
+            <label for="mark">Minimum marks to go to assignment:</label>
+            <input type="number" id="mark" name="mark" required>
+            <label for="badges">Badges:</label>
+            <div id="badges-container">
+              <input type="radio" name="badges" value="pro" onchange="displayBadgeImage('https://images.squarespace-cdn.com/content/v1/5ce4e383c91a190001537163/1653365043041-9SBNP4GHPLA1JXFSBKT7/Owl+5054+v6+Green+-+Black+-+600x600.gif')"> Pro
+              <input type="radio" name="badges" value="beginner" onchange="displayBadgeImage('https://i.pinimg.com/originals/83/0e/f7/830ef72582287cfb5c7fbe61a24dbc36.gif')"> Intermediate
+              <input type="radio" name="badges" value="intermediate" onchange="displayBadgeImage('https://cdn.dribbble.com/users/3278261/screenshots/6747984/ezgif.com-video-to-gif_11.gif')"> Beginner
+              <input type="radio" name="badges" value="none" onchange="displayBadgeImage('')"> None
+            </div>
+            <div id="badgeImageContainer"></div>
+
+            <!-- Hidden input to store the question count -->
+            <input type="hidden" id="questionCount" name="questionCount" value="0">
+
+            <div id="questions-container">
+              <!-- Questions will be dynamically added here -->
+            </div>
+
+            <button class="addBtn" type="button" onclick="addQuestion()">Add Question</button>
+            <button class="addBtn" type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+  </div>
+
+  <script>
+    function addQuestion() {
+      console.log('addQuestion called');
+      var questionsContainer = document.getElementById('questions-container');
+      var questionCountInput = document.getElementById('questionCount');
+      var questionCount = parseInt(questionCountInput.value);
+
+      var questionDiv = document.createElement('div');
+      questionDiv.className = 'question';
+
+      questionDiv.innerHTML = `
+        <label for="question_${questionCount}">Question:</label>
+        <textarea name="question_${questionCount}" rows="4" required></textarea><br><br>
+        <label for="choices_${questionCount}">Choices:</label>
+        <div id="choices-container_${questionCount}"></div><br>
+        <button type="button" onclick="addChoice(${questionCount})">Add Choice</button><br><br>
+        <label for="correctAnswer_${questionCount}">Correct Answer:</label>
+        <input type="text" name="correctAnswer_${questionCount}" required><br><br>
+        <label for="hint_${questionCount}">Hint:</label>
+        <input type="text" name="hint_${questionCount}" required><br><br>
+        <label for="type_${questionCount}">Type:</label>
+        <select name="type_${questionCount}" required>
+          <option value="conceptual">Conceptual</option>
+          <option value="theoretical">Application</option>
+          <option value="identification">Problem Solving</option>
+        </select><br><br>
+      `;
+      questionsContainer.appendChild(questionDiv);
+      questionCountInput.value = questionCount + 1;
+    }
+
+    function addChoice(questionIndex) {
+      console.log('addChoice called');
+      var choicesContainer = document.getElementById(`choices-container_${questionIndex}`);
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.name = `choices_${questionIndex}[]`;
+      input.required = true;
+      choicesContainer.appendChild(input);
+      choicesContainer.appendChild(document.createElement('br'));
+    }
+
+    function displayBadgeImage(imageUrl) {
+      var badgeImageContainer = document.getElementById('badgeImageContainer');
+      badgeImageContainer.innerHTML = '';
+      if (imageUrl) {
+        var img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = 'Badge Image';
+        badgeImageContainer.appendChild(img);
+      }
+    }
+
+    function updateCourseName() {
+      var courseNameInput = document.getElementById('coursename');
+      var hiddenCourseNameInput = document.getElementById('course_Name');
+      hiddenCourseNameInput.value = courseNameInput.value;
+    }
+    
+  </script>
+</body>
+</html>

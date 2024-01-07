@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Assignment - Fantasy Theme</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/65e63729-532b-458e-aa16-f693151bda5c/dfshbim-40c694b9-c12a-47f1-8ecd-f2ca8d5cdcb3.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzY1ZTYzNzI5LTUzMmItNDU4ZS1hYTE2LWY2OTMxNTFiZGE1Y1wvZGZzaGJpbS00MGM2OTRiOS1jMTJhLTQ3ZjEtOGVjZC1mMmNhOGQ1Y2RjYjMuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.j40rM3O8QP_7obWRLgZZtaiMUUon1b0WpWB67aIa3tE');
+        }
+
+        h1 {
+            color: #211078;
+            margin-bottom: 20px;
+        }
+
+        div {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #918787;
+            padding: 20px;
+            border-radius: 10px;
+            opacity: 0.8;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff5733;
+        }
+
+        li,h3 {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #444;
+            color: #fff;
+            border: 1px solid #666;
+            border-radius: 5px;
+            width: auto;
+        }
+
+        .edit-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: inline-block; /* Added for inline alignment */
+            margin-bottom: 10px; /* Added for spacing */
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Fantasy Theme Assignment</h1>
+        <h2>Question: {{ question }}</h2>
+        
+        <h2>User Answers:</h2>
+        <ul>
+            {% for answer in user_answers %}
+                 <a class="edit-button" href="{{ answer }}">View Material</a>
+            {% endfor %}
+        </ul>
+    </div>
+    <h3>Assessment Mark: {{ assessment_mark }}</h3>
+</body>
+</html>

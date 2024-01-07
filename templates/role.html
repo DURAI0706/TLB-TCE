@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://wallpaperaccess.com/full/4649972.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-box {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .role-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .role {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .role img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .role p {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .role:hover {
+            transform: scale(1.1);
+        }
+
+        .role-link {
+            text-decoration: none;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-box">
+        <h2>Choose your role</h2>
+        <form method="post" action="{{ url_for('role') }}">
+            <div class="role-container">
+                <button type="submit" name="role" value="student" class="role-link">
+                    <div class="role student">
+                        <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT-_32E8Y5sA8XzwK2mLFdRBIrtkOmZTWQuMhkGqr491l_dSTco" alt="Student">
+                        <p>Student</p>
+                    </div>
+                </button>
+                <button type="submit" name="role" value="teacher" class="role-link">
+                    <div class="role teacher">
+                        <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQqx9pBJfkUSmPEuYQonMG2Rv485S4b_aHo5IKAaGRcQsafeN8y" alt="Teacher">
+                        <p>Teacher</p>
+                    </div>
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

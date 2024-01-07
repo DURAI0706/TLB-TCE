@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Result - Horror</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/65e63729-532b-458e-aa16-f693151bda5c/dfshbim-40c694b9-c12a-47f1-8ecd-f2ca8d5cdcb3.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzY1ZTYzNzI5LTUzMmItNDU4ZS1hYTE2LWY2OTMxNTFiZGE1Y1wvZGZzaGJpbS00MGM2OTRiOS1jMTJhLTQ3ZjEtOGVjZC1mMmNhOGQ1Y2RjYjMuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.j40rM3O8QP_7obWRLgZZtaiMUUon1b0WpWB67aIa3tE');
+    }
+
+
+        div {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            opacity: 0.8;
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+            color: #555;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Quiz Result - Horror</h1>
+        <p>Course: {{ course_name }}</p>
+        <p>Quiz: {{ quiz_name }}</p>
+        <p>Recommendation: Horror</p>
+        <p>Total Marks: {{ total_marks }}</p>
+        <p>Correct Ratio: {{ correct_ratio }}</p>
+        <p>Incorrect Ratio: {{ incorrect_ratio }}</p>
+        
+        <!-- Add more details or customize the layout as needed -->
+
+        <!-- Add Next button -->
+        <form action="{{ url_for('assignment_list', course_name=course_name, quiz_name=quiz_name) }}" method="get">
+            <button type="submit">Next</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Your head content here -->
+    <title>Edit Assignment</title>
+</head>
+
+<body>
+    <h1>Edit Assignment</h1>
+
+    {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+
+    <form method="post" action="/edit_assignment/{{ assignment.assignment_name }}" enctype="multipart/form-data">
+        <label for="assignmentName">Assignment Name:</label>
+        <input type="text" id="assignmentName" name="assignmentName" value="{{ assignment.assignment_name }}" required>
+        <br>
+
+        <!-- Hidden input to store the question count -->
+        <input type="hidden" id="questionCount" name="questionCount" value="{{ assignment.questions|length }}">
+
+        <div id="questions-container">
+            {% for question in assignment.questions %}
+                <div class="question">
+                    <label for="question_{{ loop.index0 }}">Question:</label>
+                    <textarea name="question_{{ loop.index0 }}" rows="4" required>{{ question.question }}</textarea>
+                    <br>
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" onclick="addQuestion()">Add Question</button>
+        <button type="submit">Update Assignment</button>
+    </form>
+
+    <script>
+        function addQuestion() {
+            console.log('addQuestion called');  // Add this line for debugging
+            var questionsContainer = document.getElementById('questions-container');
+            var questionCountInput = document.getElementById('questionCount');
+            var questionCount = parseInt(questionCountInput.value);
+
+            var questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+
+            questionDiv.innerHTML = `
+                <label for="question_${questionCount}">Question:</label>
+                <textarea name="question_${questionCount}" rows="4" required></textarea>
+                <br>
+            `;
+
+            questionsContainer.appendChild(questionDiv);
+            questionCountInput.value = questionCount + 1;
+        }
+    </script>
+</body>
+
+</html>

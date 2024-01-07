@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz and Assignment Viewer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      .edit-input {
+        width: 50px;
+      }
+
+      .save-button {
+        background-color: #4caf50;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      #notification {
+        display: none;
+        padding: 10px;
+        margin-top: 10px;
+        background-color: #4caf50;
+        color: white;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Select Quiz and Assignment</h2>
+    <form method="POST" action="/leaderboard">
+      <label for="course_name">Select Course:</label>
+      <select id="course_name" name="course_name">
+        {% for course in unique_courses %}
+        <option value="{{ course }}">{{ course }}</option>
+        {% endfor %}
+      </select>
+      <label for="quiz_name">Select Quiz Name:</label>
+      <select id="quiz_name" name="quiz_name">
+        {% for quiz in unique_quiz_names %}
+        <option value="{{ quiz }}">{{ quiz }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="assignment_name">Select Assignment:</label>
+      <select id="assignment_name" name="assignment_name">
+        {% for assignment in unique_assignments %}
+        <option value="{{ assignment }}">{{ assignment }}</option>
+        {% endfor %}
+      </select>
+
+      <input type="submit" value="Submit" />
+    </form>
+
+    {% if data %}
+    <h2>Results</h2>
+    <table>
+      <tr>
+        <th>User Email</th>
+        <th>User Answer</th>
+        <th>Assessment Mark</th>
+      </tr>
+      {% for result in data %}
+      <tr>
+        <td>{{ result.user_email }}</td>
+        <td>
+          <a href="{{ result.user_answer }}" target="_blank"
+            >Open Google Drive</a
+          >
+        </td>
+        <td>
+          <input
+            id="edit-input-{{ loop.index }}"
+            class="edit-input"
+            type="text"
+            value="{{ result.assessment_mark }}"
+          />
+          <button
+            class="save-button"
+            type="button"
+            onclick="saveMark('{{ result.user_email }}', {{ loop.index }})"
+          >
+            Save
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+
+    <!-- Notification div for save success/error -->
+    <div id="notification"></div>
+
+    <script>
+      function saveMark(userEmail, index) {
+        var inputElement = document.getElementById("edit-input-" + index);
+        var mark = inputElement.value;
+
+        // AJAX request to send the mark to the server and update the database
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+              showNotification("Save successful!");
+            } else {
+              showNotification("Error saving mark!");
+            }
+          }
+        };
+
+        // Open a POST request to the server
+        xhr.open("POST", "/save_mark", true);
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+
+        // Send the data as form data
+        var formData =
+          "userEmail=" +
+          encodeURIComponent(userEmail) +
+          "&mark=" +
+          encodeURIComponent(mark);
+
+        xhr.send(formData);
+      }
+
+      function showNotification(message) {
+        var notificationDiv = document.getElementById("notification");
+        notificationDiv.innerHTML = message;
+        notificationDiv.style.display = "block";
+
+        // Hide the notification after 3 seconds
+        setTimeout(function () {
+          notificationDiv.style.display = "none";
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>

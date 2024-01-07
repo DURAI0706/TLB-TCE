@@ -1,0 +1,129 @@
+course_view <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Course View</title>
+  </head>
+  <body>
+    <h1>Course View</h1>
+
+    {% for course in department_courses %}
+    <div class="course-container">
+      <h2>{{ course.name }}</h2>
+      <p>Created By: {{ course.createdBy }}</p>
+      <p>Description: {{ course.description }}</p>
+
+      <h3>Join the Course</h3>
+      <!-- Button to open the password modal -->
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-toggle="modal"
+        data-target="#passwordModal{{ course.name }}"
+      >
+        Join
+      </button>
+
+      <!-- Modal for entering the password -->
+      <div
+        class="modal fade"
+        id="passwordModal{{ course.name }}"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="passwordModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="passwordModalLabel">
+                Enter Password
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- Input field for entering the password -->
+              <input
+                type="password"
+                class="form-control"
+                id="passwordInput{{ course.name }}"
+                placeholder="Enter password"
+              />
+            </div>
+            <div class="modal-footer">
+              <!-- Button to submit the password -->
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="checkPassword('{{ course.name }}', '{{ course.password }}')"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Display the already joined courses -->
+    <h2>Joined Courses</h2>
+    {% for course in joined_courses %}
+    <div class="course-container">
+      <h3>{{ course.course_name }}</h3>
+      <p>Created By: {{ course.created_by }}</p>
+      <p>Description: {{ course.description }}</p>
+    </div>
+    {% endfor %}
+
+    <p>Back to <a href="/">Home</a></p>
+
+    <!-- Include Bootstrap and jQuery libraries -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXP4U5P4hPYA7fe9WRVIz3uW2D+xI5b7GBd"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      // JavaScript function to check the entered password
+      function checkPassword(courseName, coursePassword) {
+        // Get the entered password from the input field
+        var passwordInput = document.getElementById(
+          "passwordInput" + courseName
+        );
+        var enteredPassword = passwordInput.value;
+
+        // Check if the entered password matches the password in the course collection
+        if (enteredPassword === coursePassword) {
+          // If the password is correct, redirect to the join page
+          window.location.href = /join_course/${courseName};
+        } else {
+          // If the password is incorrect, you can show an error message or handle it accordingly
+          alert("Incorrect password. Please try again.");
+        }
+
+        // Close the modal
+        $("#passwordModal" + courseName).modal("hide");
+      }
+    </script>
+  </body>
+</html>

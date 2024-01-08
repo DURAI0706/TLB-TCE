@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Result - Horror</title>
+    <title>Quiz Result</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -36,36 +36,55 @@
             color: #555;
         }
 
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
+        .edit-button {
+            background-color: #4CAF50;
+            color: white;
             border: none;
-            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
             cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
+            display: inline-block;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div>
-        <h1>Quiz Result - Horror</h1>
+        <h1>Quiz Result</h1>
         <p>Course: {{ course_name }}</p>
         <p>Quiz: {{ quiz_name }}</p>
-        <p>Recommendation: Horror</p>
         <p>Total Marks: {{ total_marks }}</p>
         <p>Correct Ratio: {{ correct_ratio }}</p>
         <p>Incorrect Ratio: {{ incorrect_ratio }}</p>
-        
-        <!-- Add more details or customize the layout as needed -->
+        <a class="edit-button" href="{{ url_for('assignment_list', course_name=course_name, quiz_name=quiz_name) }}?v={{ script_version }}" method="get">Next</a>
 
-        <!-- Add Next button -->
-        <form action="{{ url_for('assignment_list', course_name=course_name, quiz_name=quiz_name) }}" method="get">
-            <button type="submit">Next</button>
-        </form>
+        <script>
+            // Cache Busting: Append a unique version parameter to the script URL
+            const scriptVersion = '{{ script_version }}';
+            const scriptUrl = `{{ url_for('static', filename='your_script.js') }}?v=${scriptVersion}`;
+
+            // Disable the back button functionality
+            history.pushState(null, null, location.href);
+            window.onpopstate = function () {
+                history.go(1);
+            };
+
+            // Prevent right-click context menu and keyboard shortcuts
+            document.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.ctrlKey && (e.key === 'z' || e.key === 'Z' || e.key === 'u' || e.key === 'U')) {
+                    e.preventDefault();
+                }
+            });
+
+            // Load the script with the unique version
+            const scriptElement = document.createElement('script');
+            scriptElement.src = scriptUrl;
+            document.head.appendChild(scriptElement);
+        </script>
     </div>
 </body>
 </html>

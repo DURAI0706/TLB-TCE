@@ -8,9 +8,16 @@ import bcrypt
 import joblib
 from transformers import AutoTokenizer, TFAutoModel
 from flask import jsonify
+from tensorflow.keras.layers import Embedding, LSTM, Dense, Input
+from tensorflow.keras.models import Model
 from flask import render_template, redirect, session, send_from_directory
 import numpy as np
+import tensorflow as tf
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.models import Sequential
 from collections import Counter
+from tensorflow.keras.models import Sequential, load_model
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from datetime import datetime, timedelta, timezone
@@ -21,6 +28,7 @@ import skfuzzy as fuzz
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LogisticRegression
+from keras.utils import to_categorical
 import matplotlib.pyplot as plt 
 from datetime import timedelta
 import subprocess  
@@ -29,7 +37,8 @@ from jinja2 import Environment
 app = Flask(__name__)
 app.secret_key = "sawq#@21"
 
-client = MongoClient(os.getenv('connection_string'))
+connection_string = f"mongodb+srv://hackers:hackers123@psg.kmis61j.mongodb.net/"
+client = MongoClient(connection_string)
 db = client['gamification']
 student_collection = db['student']
 recommendation_collection = db['recommendation'] 
@@ -613,6 +622,7 @@ def start_quiz(course_name, quiz_name):
     quiz = quiz_collection.find_one({'course_name': course_name, 'quiz_name': quiz_name})
     questions = quiz.get('questions', [])
     timer = quiz.get('timer', 0)
+    quiz_badges = quiz.get('badges', {})
     student_collection = db['student']
     new_collection = db['new_users']
     new_datas = new_collection.find_one({'email': user_email})
@@ -706,7 +716,8 @@ def start_quiz(course_name, quiz_name):
                 'time_taken': time_taken,
                 'course_name': course_name,
                 'quiz_name': quiz_name,
-                'submission_date': datetime.now().strftime('%Y-%m-%d')
+                'submission_date': datetime.now().strftime('%Y-%m-%d'),
+                'quiz_badges': quiz_badges
             })
             leaderboard_collection.insert_one({
                 'email': user_email,
@@ -812,7 +823,8 @@ def start_quiz(course_name, quiz_name):
                 'time_taken': time_taken,
                 'course_name': course_name,
                 'quiz_name': quiz_name,
-                'submission_date': datetime.now().strftime('%Y-%m-%d')
+                'submission_date': datetime.now().strftime('%Y-%m-%d'),
+                'quiz_badges':quiz_badges
             })
             student_collection.update_one(
                 {'email': user_email},
@@ -859,7 +871,8 @@ def start_quiz(course_name, quiz_name):
                 'time_taken': time_taken,
                 'course_name': course_name,
                 'quiz_name': quiz_name,
-                'submission_date': datetime.now().strftime('%Y-%m-%d')
+                'submission_date': datetime.now().strftime('%Y-%m-%d'),
+                'quiz_badges':quiz_badges
 
             })
             learning_collection.update_one(
@@ -935,7 +948,8 @@ def start_quiz(course_name, quiz_name):
                 'time_taken': time_taken,
                 'course_name': course_name,
                 'quiz_name': quiz_name,
-                'submission_date': datetime.now().strftime('%Y-%m-%d')
+                'submission_date': datetime.now().strftime('%Y-%m-%d'),
+                'quiz_badges':quiz_badges
 
             })
             leaderboard_collection.insert_one({
@@ -1694,4 +1708,5 @@ def slogout():
     return redirect("/studentlogin")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.debug = True
+    app.run(port=5001)

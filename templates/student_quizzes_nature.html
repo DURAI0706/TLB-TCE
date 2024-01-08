@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ course_name }} - Horror Quizzes</title>
+    <title>{{ course_name }} -  Quizzes</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -80,6 +80,15 @@
             display: inline-block; /* Added for inline alignment */
             margin-bottom: 10px; /* Added for spacing */
         }
+        span.instructions {
+            display: block;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f8ff; /* AliceBlue */
+            border: 1px solid #add8e6; /* LightBlue */
+            border-radius: 5px;
+            color: #333;
+          }
 
     </style>
 </head>
@@ -95,6 +104,13 @@
         {% endfor %}
     </ul>
 
+    <span class="instructions"
+      >Instructions: Use Hint costs - 10 coins 💰, Show Answer costs - 10 coins
+      💰 and 1 key 🗝, Add Extra Time costs - 1 heart ❤.</span
+    >
+    <span class="instructions"
+      >one you click next button you cant go to previous questions.</span
+    >
     <!-- Non-Completed Quizzes Section -->
     <h2>Non-Completed Quizzes</h2>
     <ul>

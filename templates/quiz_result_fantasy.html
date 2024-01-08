@@ -53,10 +53,9 @@
 </head>
 <body>
     <div>
-        <h1>Quiz Result - Horror</h1>
+        <h1>Quiz Result</h1>
         <p>Course: {{ course_name }}</p>
         <p>Quiz: {{ quiz_name }}</p>
-        <p>Recommendation: Horror</p>
         <p>Total Marks: {{ total_marks }}</p>
         <p>Correct Ratio: {{ correct_ratio }}</p>
         <p>Incorrect Ratio: {{ incorrect_ratio }}</p>
@@ -68,5 +67,78 @@
             <button type="submit">Next</button>
         </form>
     </div>
+</body>
+</html>
+div {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    opacity: 0.8;
+    max-width: 400px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+p {
+    margin: 10px 0;
+    color: #555;
+}
+
+.edit-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+<div>
+<h1>Quiz Result</h1>
+<p>Course: {{ course_name }}</p>
+<p>Quiz: {{ quiz_name }}</p>
+<p>Total Marks: {{ total_marks }}</p>
+<p>Correct Ratio: {{ correct_ratio }}</p>
+<p>Incorrect Ratio: {{ incorrect_ratio }}</p>
+<a class="edit-button" href="{{ url_for('assignment_list', course_name=course_name, quiz_name=quiz_name) }}?v={{ script_version }}" method="get">Next</a>
+
+<script>
+    // Cache Busting: Append a unique version parameter to the script URL
+    const scriptVersion = '{{ script_version }}';
+    const scriptUrl = `{{ url_for('static', filename='your_script.js') }}?v=${scriptVersion}`;
+
+    // Disable the back button functionality
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+
+    // Prevent right-click context menu and keyboard shortcuts
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.ctrlKey && (e.key === 'z' || e.key === 'Z' || e.key === 'u' || e.key === 'U')) {
+            e.preventDefault();
+        }
+    });
+
+    // Load the script with the unique version
+    const scriptElement = document.createElement('script');
+    scriptElement.src = scriptUrl;
+    document.head.appendChild(scriptElement);
+</script>
+</div>
 </body>
 </html>

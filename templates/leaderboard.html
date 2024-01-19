@@ -1,164 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quiz and Assignment Viewer</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-      }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
 
-      table {
-        border-collapse: collapse;
-        width: 100%;
-        margin-top: 20px;
-      }
+        h1 {
+            color: #333;
+        }
 
-      th,
-      td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-      }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
 
-      th {
-        background-color: #f2f2f2;
-      }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-      .edit-input {
-        width: 50px;
-      }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
 
-      .save-button {
-        background-color: #4caf50;
-        color: white;
-        padding: 5px 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
+        th {
+            background-color: #f2f2f2;
+        }
 
-      #notification {
-        display: none;
-        padding: 10px;
-        margin-top: 10px;
-        background-color: #4caf50;
-        color: white;
-        text-align: center;
-      }
+        .highlight {
+            background-color: #e6f7ff;
+        }
     </style>
-  </head>
-  <body>
-    <h2>Select Quiz and Assignment</h2>
-    <form method="POST" action="/leaderboard">
-      <label for="course_name">Select Course:</label>
-      <select id="course_name" name="course_name">
-        {% for course in unique_courses %}
-        <option value="{{ course }}">{{ course }}</option>
-        {% endfor %}
-      </select>
-      <label for="quiz_name">Select Quiz Name:</label>
-      <select id="quiz_name" name="quiz_name">
-        {% for quiz in unique_quiz_names %}
-        <option value="{{ quiz }}">{{ quiz }}</option>
-        {% endfor %}
-      </select>
+</head>
+<body>
+    <h1>Leaderboard</h1>
 
-      <label for="assignment_name">Select Assignment:</label>
-      <select id="assignment_name" name="assignment_name">
-        {% for assignment in unique_assignments %}
-        <option value="{{ assignment }}">{{ assignment }}</option>
-        {% endfor %}
-      </select>
+    <form method="post" action="{{ url_for('leaderboard', user_email=user_email) }}">
+        <label for="course_name">Select Course:</label>
+        <select name="course_name">
+            {% for course in unique_courses %}
+                <option value="{{ course }}" {% if course == selected_course %}selected{% endif %}>{{ course }}</option>
+            {% endfor %}
+        </select>
 
-      <input type="submit" value="Submit" />
+        <label for="quiz_name">Select Quiz:</label>
+        <select name="quiz_name">
+            {% for quiz in unique_quiz_names %}
+                <option value="{{ quiz }}" {% if quiz == selected_quiz %}selected{% endif %}>{{ quiz }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" name="submit_quiz">Submit</button>
     </form>
 
-    {% if data %}
-    <h2>Results</h2>
-    <table>
-      <tr>
-        <th>User Email</th>
-        <th>User Answer</th>
-        <th>Assessment Mark</th>
-      </tr>
-      {% for result in data %}
-      <tr>
-        <td>{{ result.user_email }}</td>
-        <td>
-          <a href="{{ result.user_answer }}" target="_blank"
-            >Open Google Drive</a
-          >
-        </td>
-        <td>
-          <input
-            id="edit-input-{{ loop.index }}"
-            class="edit-input"
-            type="text"
-            value="{{ result.assessment_mark }}"
-          />
-          <button
-            class="save-button"
-            type="button"
-            onclick="saveMark('{{ result.user_email }}', {{ loop.index }})"
-          >
-            Save
-          </button>
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
+    {% if quick_leaderboard_data %}
+        <h2>Quick Learner Leaderboard</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Email</th>
+                    <th>Total Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in quick_leaderboard_data %}
+                    <tr {% if entry.highlight %}class="highlight"{% endif %}>
+                        <td>{{ entry.rank }}</td>
+                        <td>{{ entry.user_email }}</td>
+                        <td>{{ entry.total_point }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No Quick Learner data available.</p>
     {% endif %}
 
-    <!-- Notification div for save success/error -->
-    <div id="notification"></div>
+    {% if average_leaderboard_data %}
+        <h2>Average Learner Leaderboard</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Email</th>
+                    <th>Total Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in average_leaderboard_data %}
+                    <tr {% if entry.highlight %}class="highlight"{% endif %}>
+                        <td>{{ entry.rank }}</td>
+                        <td>{{ entry.user_email }}</td>
+                        <td>{{ entry.total_point }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No Average Learner data available.</p>
+    {% endif %}
 
-    <script>
-      function saveMark(userEmail, index) {
-        var inputElement = document.getElementById("edit-input-" + index);
-        var mark = inputElement.value;
-
-        // AJAX request to send the mark to the server and update the database
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-          if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-              showNotification("Save successful!");
-            } else {
-              showNotification("Error saving mark!");
-            }
-          }
-        };
-
-        // Open a POST request to the server
-        xhr.open("POST", "/save_mark", true);
-        xhr.setRequestHeader(
-          "Content-Type",
-          "application/x-www-form-urlencoded"
-        );
-
-        // Send the data as form data
-        var formData =
-          "userEmail=" +
-          encodeURIComponent(userEmail) +
-          "&mark=" +
-          encodeURIComponent(mark);
-
-        xhr.send(formData);
-      }
-
-      function showNotification(message) {
-        var notificationDiv = document.getElementById("notification");
-        notificationDiv.innerHTML = message;
-        notificationDiv.style.display = "block";
-
-        // Hide the notification after 3 seconds
-        setTimeout(function () {
-          notificationDiv.style.display = "none";
-        }, 3000);
-      }
-    </script>
-  </body>
+    {% if slow_leaderboard_data %}
+        <h2>Slow Learner Leaderboard</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Email</th>
+                    <th>Total Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in slow_leaderboard_data %}
+                    <tr {% if entry.highlight %}class="highlight"{% endif %}>
+                        <td>{{ entry.rank }}</td>
+                        <td>{{ entry.user_email }}</td>
+                        <td>{{ entry.total_point }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No Slow Learner data available.</p>
+    {% endif %}
+</body>
 </html>

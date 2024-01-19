@@ -1,25 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Head section as before -->
-  </head>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="theme-color" content="#1b1b1b">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>Start Quiz - {{ course_name }} - {{ quiz_name }}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #088eb3, #958c29);
+            color: #ffffff;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        p {
+            margin: 1vw 0;
+        }
+
+        #timerDisplay {
+            color: #900;
+            font-weight: bold;
+        }
+
+        #keysDisplay,
+        #coinsDisplay,
+        #heartDisplay {
+            color: #009;
+            font-weight: bold;
+        }
+
+        .quiz-question {
+            background-color: white;
+            border-radius: 1rem;
+            margin: 2vw;
+            opacity: 0.8;
+            box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+            padding: 2vw;
+            position: relative;
+            width: 90%; /* Set width for two boxes in a row */
+            max-width: 600px; /* Set a maximum width */
+        }
+
+        ul {
+            color: #1f1c18;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            color: #1f1c18;
+            margin-bottom: 1vw;
+        }
+
+        p {
+            color: #1f1c18;
+        }
+
+        button {
+            padding: 10px;
+            margin: 2vw 1vw;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .course-container1 {
+            background-color: white;
+            border-radius: 1rem;
+            margin: auto;
+            opacity: 0.8;
+            box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+            padding: 2vw;
+            position: relative;
+            width: 90%; /* Set width for two boxes in a row */
+            max-width: 500px; /* Set a maximum width */
+        }
+
+        @media only screen and (max-width: 600px) {
+            /* Adjust styles for screens with a maximum width of 600px (e.g., smartphones) */
+            h1 {
+                font-size: 4vw; /* Adjust font size for smaller screens */
+            }
+
+            p,
+            #timerDisplay,
+            #keysDisplay,
+            #coinsDisplay,
+            #heartDisplay,
+            button {
+                font-size: 2vw; /* Adjust font size for smaller screens */
+            }
+        }
+    </style>
+</head>
   <body>
     <h1>Start Quiz - {{ course_name }} - {{ quiz_name }}</h1>
+    <div class="course-container1">
+      <!-- Display Timer and Gaming Elements with Images -->
+      <div>
+          <img src="https://cdn.dribbble.com/users/11609495/screenshots/18251844/media/a4d3556d8b51796968cbcc63ea7c5abc.gif" alt="Timer" style="width: 30px; height: 30px;"> <!-- Replace "timer_image.png" with the actual path to your timer image -->
+          <span id="timerDisplay">{{ timer / 60 }} minutes</span>
+      </div>
 
-    <!-- Display Timer and Gaming Elements -->
-    <p id="timerDisplay">⏳: {{ timer / 60 }} minutes</p>
-    <p id="coinsDisplay">💥: {{ total_coins }}</p>
-    <p id="keysDisplay">🗝: {{ total_keys }}</p>
-    <p id="heartDisplay">♥: {{ total_heart }}</p>
+      <div>
+          <img src="https://media.tenor.com/QBn_b5A8PxEAAAAd/litecoin-ltc.gif" alt="Coins" style="width: 30px; height: 30px;"> <!-- Replace "coins_image.png" with the actual path to your coins image -->
+          <span id="coinsDisplay">{{ total_coins }}</span>
+      </div>
 
+      <div>
+          <img src="https://cdna.artstation.com/p/assets/images/images/047/352/142/original/geminy-voxel-ezgif-com-gif-maker-28.gif" alt="Keys" style="width: 30px; height: 30px;"> <!-- Replace "keys_image.png" with the actual path to your keys image -->
+          <span id="keysDisplay">{{ total_keys }}</span>
+      </div>
+
+      <div>
+          <img src="https://i.pinimg.com/originals/b3/4c/fc/b34cfc79627ee61b72374e08d05bea1b.gif" alt="Heart" style="width: 30px; height: 30px;"> <!-- Replace "heart_image.png" with the actual path to your heart image -->
+          <span id="heartDisplay">{{ total_heart }}</span>
+      </div>
+    </div>
     <!-- Display Questions and Options with Form -->
-    <form
-      id="quizForm"
-      method="post"
-      action="{{ url_for('start_quiz', course_name=course_name, quiz_name=quiz_name) }}"
-    >
+    <form id="quizForm" method="post" action="{{ url_for('start_quiz', course_name=course_name, quiz_name=quiz_name) }}">
+      <input type="hidden" name="showAnswerClicks" id="showAnswerClicks" value="0"/>
+      <input type="hidden" name="useHintClicks" id="useHintClicks" value="0" />
+      <input type="hidden" name="addExtraTimeClicks" id="addExtraTimeClicks" value="0"/>
       {% for question_index in range(questions | length) %}
-      <div class="quiz-question" {% if question_index > 0 %}style="display: none;"{% endif %}>
+      <div class="quiz-question" {% if question_index>0 %}style="display: none;"{% endif %}>
         <p>{{ questions[question_index].question }}</p>
         <ul>
           {% for option in questions[question_index].choices %}
@@ -36,19 +161,17 @@
         <p class="correct-answer" style="display: none">
           {{ questions[question_index].correct_answer }}
         </p>
+        <p class="hint" style="display: none">
+          {{ questions[question_index].hint }}
+        </p>
       </div>
       {% endfor %}
-      <button type="button" id="nextButton" onclick="showQuestion(1)">
-        Next
-      </button>
+      <br><br>
+      <button type="button" id="nextButton" onclick="showQuestion(1)">Next</button>
       <button type="submit">Submit</button>
       <button type="button" onclick="useHint()">Use Hint</button>
-      <button type="button" id="extraTimeButton" onclick="addExtraTime()">
-        Add Extra Time
-      </button>
-      <button type="button" id="showAnswerButton" onclick="showAnswer(); countShowAnswerClicks()">
-        Show Answer (Cost: {{ showAnswerCost }} Keys)
-      </button>
+      <button type="button" id="extraTimeButton" onclick="addExtraTime()">Add Extra Time</button>
+      <button type="button" id="showAnswerButton" onclick="showAnswer(); countShowAnswerClicks()">Show Answer (Cost: {{ showAnswerCost }} Keys)</button>
     </form>
 
     <script>
@@ -59,7 +182,7 @@
       var totalCoins = {{ total_coins }};
       var totalKeys = {{ total_keys }};
       var totalHeart = {{ total_heart }};
-      var hearts = totalHeart;  // Initialize hearts variable
+        // Initialize hearts variable
 
       var timeToAdd = 30; // Extra time to be added on correct answer in seconds;
       var extraTimeAdded = false; // Flag to check if extra time has been added
@@ -67,13 +190,33 @@
       // Define the cost to show an answer
       var showAnswerCost = 10; // Updated show answer cost
 
-      // Added function to count the number of times "Show Answer" button is clicked
-      var showAnswerClickCount = 0; // Initialize the counter variable
+      // Added variables to count the number of times buttons are clicked
+      var showAnswerClicks = 0;
+      var useHintClicks = 0;
+      var addExtraTimeClicks = 0;
 
       function countShowAnswerClicks() {
         console.log('countShowAnswerClicks function called');
-        showAnswerClickCount++;
-        console.log('Show Answer Button Click Count:', showAnswerClickCount);
+        showAnswerClicks++;
+        document.getElementById('showAnswerClicks').value = showAnswerClicks;
+        console.log('Show Answer Button Click Count:', showAnswerClicks);
+      }
+
+      function countUseHintClicks() {
+        console.log('countUseHintClicks function called');
+        useHintClicks++;
+        document.getElementById('useHintClicks').value = useHintClicks;
+        console.log('Use Hint Button Click Count:', useHintClicks);
+      }
+
+      function countAddExtraTimeClicks() {
+        console.log('countAddExtraTimeClicks function called');
+        addExtraTimeClicks++;
+        document.getElementById('addExtraTimeClicks').value = addExtraTimeClicks;
+        console.log('Add Extra Time Button Click Count:', addExtraTimeClicks);
+
+        // Add a print statement to log the count in the console
+        console.log('Total Add Extra Time Clicks:', document.getElementById('addExtraTimeClicks').value);
       }
 
       function showQuestion(offset) {
@@ -98,31 +241,46 @@
         }
       }
 
+      var maxAddExtraTimeClicks = 2; // Set the maximum number of times allowed
+
       function addExtraTime() {
         console.log('addExtraTime function called');
-        // Add logic to deduct hearts and add extra time
-        if (hearts > 0) {
-          hearts--;
-          timer += timeToAdd;
-          updateHeartDisplay();
-          updateTimerDisplay();
+
+        // Check if the function can be used based on the counter
+        if (addExtraTimeClicks < maxAddExtraTimeClicks) {
+          // Add logic to deduct hearts and add extra time
+          if (totalCoins > 0) {
+            totalCoins=totalCoins-25;
+            updateCoinsDisplay();
+
+            // Log the timer value before the update
+            console.log('Before Timer Update - Timer:', timer);
+
+            timer += timeToAdd;
+
+            // Log the timer value after the update
+            console.log('After Timer Update - Timer:', timer);
+
+            updateTimerDisplay();
+            addExtraTimeClicks++; // Increment the counter
+          } else {
+            alert('Not enough hearts for extra time.');
+          }
         } else {
-          alert('Not enough hearts for extra time.');
+          alert('You can only use "Add Extra Time" twice per quiz.');
         }
       }
 
-      function updateHeartDisplay() {
-        console.log('updateHeartDisplay function called');
-        document.getElementById('heartDisplay').innerText = hearts;
-      }
+
 
       function startTimer() {
         console.log('startTimer function called');
         countdownInterval = setInterval(function () {
           timer--;
+
           if (timer <= 0) {
             clearInterval(countdownInterval);
-            document.getElementById('quizForm').submit();
+            submitForm(); // Call the function to submit the form
           }
           updateTimerDisplay();
         }, 1000);
@@ -144,55 +302,100 @@
 
       function useHint() {
         console.log('useHint function called');
-        // Add logic to deduct coins for using a hint
-        if (totalCoins >= 10) {
-          totalCoins -= 10;
-          alert('Hint: Your hint message here.');
+        // Increment the hint clicks counter
+        countUseHintClicks();
+
+        // Deduct 10 coins for using the hint
+        if (totalKeys >= 1) {
+          totalKeys -= 1;
+          updateKeysDisplay();
+
+          // Retrieve and display the hint
+          var currentQuestionElement = getCurrentQuestionElement();
+          if (currentQuestionElement) {
+            var hintElement = currentQuestionElement.querySelector('.hint');
+            if (hintElement) {
+              hintElement.style.display = 'block';
+            } else {
+              console.error('Error: Could not find the hint element.');
+            }
+          } else {
+            console.error('Error: Could not find the current question element.');
+          }
         } else {
-          alert('Not enough coins for a hint.');
-        }
-        updatePointsDisplay(); // Call the function to update points display
-      }
-
-      function updatePointsDisplay() {
-        console.log('updatePointsDisplay function called');
-
-        var coinsDisplayElement = document.getElementById('coinsDisplay');
-        var keysDisplayElement = document.getElementById('keysDisplay');
-        var heartDisplayElement = document.getElementById('heartDisplay');
-
-        console.log('coinsDisplayElement:', coinsDisplayElement);
-        console.log('keysDisplayElement:', keysDisplayElement);
-        console.log('heartDisplayElement:', heartDisplayElement);
-
-        if (coinsDisplayElement && keysDisplayElement && heartDisplayElement) {
-          coinsDisplayElement.innerText = 'Coins: ' + totalCoins;
-          keysDisplayElement.innerText = 'Keys: ' + totalKeys;
-          heartDisplayElement.innerText = 'Hearts: ' + hearts;
-        } else {
-          console.error('One or more display elements not found.');
+          alert('Not enough coins for using the hint.')
         }
       }
 
       function showAnswer() {
         console.log('showAnswer function called');
-        // Add logic to deduct coins and keys for showing the answer
-        if (totalCoins >= 10 && totalKeys >= 1) {
-          totalCoins -= 10;
-          totalKeys -= 1;
-          updatePointsDisplay();
+        // Increment the show answer clicks counter
+        countShowAnswerClicks();
+
+
+        if (totalHeart >= 1) {
+          totalHeart -= 1;
+          updateHeartDisplay();
+
+          updateCoinsDisplay();
+          updateKeysDisplay();
 
           // Retrieve and display the correct answer
-          var currentAnswer = document.querySelector(
-            '.quiz-question:nth-child(' + (currentQuestion + 1) + ') .correct-answer'
-          ).innerText;
-          alert('Correct Answer: ' + currentAnswer);
+          var currentQuestionElement = getCurrentQuestionElement();
+          if (currentQuestionElement) {
+            var correctAnswerElement = currentQuestionElement.querySelector('.correct-answer');
+            if (correctAnswerElement) {
+              correctAnswerElement.style.display = 'block';
+            } else {
+              console.error('Error: Could not find the correct answer element.');
+            }
+          } else {
+            console.error('Error: Could not find the current question element.');
+          }
         } else {
-          alert('Not enough coins or keys to show the answer.');
+          alert('Not enough coins or keys for showing the answer.')
         }
       }
 
-      // ... (remaining functions with added console.log statements)
+      function updateCoinsDisplay() {
+        console.log('updateCoinsDisplay function called');
+        document.getElementById('coinsDisplay').innerText = 'Coins: ' + totalCoins;
+      }
+
+      function updateKeysDisplay() {
+        console.log('updateKeysDisplay function called');
+        document.getElementById('keysDisplay').innerText = 'Keys: ' + totalKeys;
+      }
+      function updateHeartDisplay() {
+        console.log('updateHeartDisplay function called');
+        document.getElementById('heartDisplay').innerText = 'Heart: ' + totalHeart;
+      }
+
+      function getCurrentQuestionElement() {
+        var questions = document.querySelectorAll('.quiz-question');
+        return questions[currentQuestion];
+      }
+
+
+      function updatePointsDisplay() {
+        console.log('updatePointsDisplay function called');
+        // ... (other code)
+      }
+
+
+
+      // Function to submit the form with counts
+      function submitForm() {
+        console.log('submitForm function called');
+
+        // Update the hidden input fields with the counts
+        document.getElementById('showAnswerClicks').value = showAnswerClicks;
+        document.getElementById('useHintClicks').value = useHintClicks;
+        document.getElementById('addExtraTimeClicks').value = addExtraTimeClicks;
+
+        // Submit the form
+        document.getElementById('quizForm').submit();
+      }
 
       // Disable right-click
       document.addEventListener('contextmenu', function (e) {
@@ -210,6 +413,28 @@
         updateTimerDisplay();
         startTimer();
       });
+            // Disable right-click
+      document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+      });
+
+      // Disable keyboard shortcuts
+      document.addEventListener('keydown', function (e) {
+        e.preventDefault();
+      });
+
+      // Start the timer when the page loads
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOMContentLoaded event triggered');
+        updateTimerDisplay();
+        startTimer();
+      });
+      
+      // Disable the back button
+      history.pushState(null, null, document.URL);
+      window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL);
+      });
     </script>
-  </body>
+ </body>
 </html>

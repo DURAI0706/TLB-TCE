@@ -1,12 +1,16 @@
-<!-- assignment_list_horror.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignment List - Horror Theme</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ course_name }} - Nature Quizzes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -17,49 +21,76 @@
             background-image: url('https://64.media.tumblr.com/deb008651aa84e0b37006f24cd2dcffa/tumblr_mlhhf1WAaV1rpc5kho1_500.gif');
         }
 
-        h1 {
-            color: #ff5733;
-            margin-bottom: 20px;
+        .container {
+            display: flex;
+            position: relative;
         }
 
-        div {
-            background-color: #333;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: left;
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0; /* Added to remove default margin */
         }
 
-        h2 {
-            color: #ff5733;
+        li {
             margin-bottom: 10px;
         }
 
-        p {
-            margin: 10px 0;
-        }
-
         a {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #ff5733;
-            color: #fff;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
+            color: #fff;
+            display: flex;
+            align-items: center;
         }
 
-        a:hover {
-            background-color: #ff7043;
+        .material-symbols-outlined {
+            margin-right: 10px;
         }
+
+        h1{
+            color: #fff;
+        }
+        h2,p {
+            color: #190202; /* Set the color for the headings */
+        }
+
+        .top-right-icons {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            z-index: 2;
+        }
+
+        .course-container {
+            background-color: white;
+            border-radius: 1rem;
+            margin: 1rem;
+            opacity: 0.8;
+            box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+            padding: 2rem;
+            position: relative;
+            width: 600px; /* Set width for two boxes in a row */
+        }
+
+        .edit-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: inline-block; /* Added for inline alignment */
+            margin-bottom: 10px; /* Added for spacing */
+        }
+
     </style>
 </head>
 <body>
 
     <h1>Assignment List</h1>
 
-    <!-- Display assignment details for horror theme -->
+    <!-- Display assignment details for Nature theme -->
     {% for assignment in assignments %}
         <div class="course-container">
             <h2>{{ assignment.assignment_name }}</h2>

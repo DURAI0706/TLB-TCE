@@ -1,338 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#1b1b1b">
     <title>Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,500;1,600;1,700;1,800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
-      :root {
-        --main-color: black;
-        --accent-color: royalblue;
-        --bkg-color: white;
-      }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-image: url(https://cdn.dribbble.com/users/1770290/screenshots/6183149/bg_79.gif);
+        }
 
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+        .container {
+            display: flex;
+            flex-direction: column; /* Change to column layout for mobile */
+        }
 
-      body,
-      html {
-        margin: 0;
-        padding: 0;
-        font-family: 'Poppins', sans-serif;
-        overflow-x: hidden;
-      }
+        .top-left-icon {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            cursor: pointer;
+            z-index: 2;
+        }
 
-      .container {
-        display: flex;
-      }
+        #menuIconImage {
+            width: 40px;
+            height: 40px;
+        }
 
-      aside {
-        width: 250px;
-        max-height: 100vh;
-        min-height: 100vh;
-        border-right: 1px solid #eee;
-        display: flex;
-        flex-direction: column;
-        background-color: #f6f6f6;
-        position: fixed;
-        left: 0;
-        top: 0;
-      }
+        div.content {
+            margin-left: 0; /* Adjusted margin for better mobile layout */
+            padding: 1px 16px;
+            height: auto;
+        }
 
-      aside > .logo {
-        height: 80px;
-        color: var(--accent-color);
-        display: flex;
-        align-items: center;
-      }
+        .logo {
+            text-align: center;
+        }
 
-      aside > .logo > h1 {
-        margin: 0;
-        margin-left: 1rem;
-      }
+        .logo h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
 
-      aside > ul {
-        min-height: 70vh;
-        border-top: 1px solid #dddddd;
-        border-bottom: 1px solid #dddddd;
-        list-style: none;
-        display: flex;
-        gap: 1rem;
-        flex-direction: column;
-        padding: 1rem;
-        border-top-right-radius: 0.5rem;
-      }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
 
-      aside > ul > li {
-        padding: 0.8rem;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: all 500ms cubic-bezier(0.165, 0.84, 0.44, 1);
-      }
+        li {
+            margin-bottom: 10px;
+        }
 
-      aside > ul > li > a {
-        color: inherit;
-        text-decoration: none;
-      }
+        a {
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+        }
 
-      aside > ul > li:hover {
-        background-color: rgba(129, 158, 245, 0.758);
-        color: #eee;
-      }
+        .material-symbols-outlined {
+            margin-right: 10px;
+        }
 
-      /* Admin Profile Button*/
-      #Adminprofile,
-      #Logout {
-        background-color: #d64141;
-        color: white;
-        display: flex;
-        margin: 1rem auto;
-        padding: 1rem;
-        border-radius: 1rem;
-        cursor: pointer;
-        transition: all 200ms cubic-bezier(0.215, 0.61, 0.355, 1);
-      }
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin-left: 0; /* Adjusted margin for better mobile layout */
+            padding: 0px 10px;
+        }
 
-      #Adminprofile > a,
-      #Logout > a {
-        color: inherit;
-        text-decoration: none;
-        display: flex;
-        gap: 0.6rem;
-      }
+        #AdminSettings {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 71, 170, 0.927);
+            opacity: 0.9; /* Adjusted opacity for better visibility on mobile */
+            max-width: 100%; /* Full width for better mobile layout */
+        }
 
-      #Logout {
-        background-color: #dddddd;
-        width: 200px;
-        margin-block: 0.2rem;
-      }
+        h1 {
+            color: #333;
+        }
 
-      #Logout:hover {
-        background-color: #d64141;
-        color: white;
-      }
+        .pictureWrapper {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-      /* Admin Profile Button*/
+        .pictureWrapper img {
+            border-radius: 50%;
+            margin-right: 10px; /* Adjusted margin for better spacing */
+            max-width: 80px; /* Set maximum width for the image */
+        }
 
-      /* Admin Page section*/
-      #AdminSettings {
-        background-color: #eee;
-        min-width: calc(100vw - 250px);
-        min-height: 100vh;
-        margin-left: 250px;
-        display: flex;
-        flex-direction: column;
-        padding: 3rem 4rem;
-      }
+        .name {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center; /* Centered text for better mobile layout */
+        }
 
-      #AdminSettings > h1 {
-        margin: 2rem 0;
-      }
+        .jobTitle {
+            color: #777;
+            text-align: center; /* Centered text for better mobile layout */
+        }
 
-      /* Modal Styling */
-      #Dialog,
-      #InfoDialog {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #fff;
-        border: 1px solid #eee;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-      }
+        .personalInformation {
+            display: flex;
+            flex-direction: column; /* Adjusted layout for better mobile display */
+            gap: 20px;
+        }
 
-      #Dialog h4 {
-        font-size: larger;
-        margin: 1rem;
-      }
+        .personalInformation_info {
+            margin-bottom: 15px;
+        }
 
-      #Dialog button {
-        width: 30%;
-        padding: 0.2rem;
-        font-size: 17px;
-      }
+        span {
+            font-weight: bold;
+            color: #777;
+        }
 
-      #Dialog > form > .buttons {
-        display: flex;
-        justify-content: end;
-        gap: 1rem;
-      }
+        p {
+            margin: 0;
+        }
 
-      #Dialog::backdrop {
-        background-color: #22222289;
-      }
+        .top-right-icons {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: row; /* Adjusted layout for better mobile display */
+            z-index: 2;
+        }
 
-      /* Info Dialog Styling */
-      #InfoDialog {
-        width: 40rem;
-      }
+        .icon-container {
+            position: relative;
+            cursor: pointer;
+            margin-bottom: 10px; /* Adjusted margin for better mobile layout */
+            overflow: hidden;
+            width: 80px;
+            height: 80px;
+        }
 
-      #InfoDialog h2 {
-        padding: 1rem;
-      }
+        .icon {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
 
-      #InfoDialog > form > .info_innerContainer {
-        padding: 1rem;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-      }
+        .icon-count {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(22, 243, 191, 0.789);
+            color: white;
+            padding: 5px;
+            border-radius: 50%;
+            font-size: 12px;
+            display: block;
+        }
 
-      #InfoDialog > form > .info_innerContainer > p {
-        background-color: #eee;
-        padding: 0.4rem;
-      }
+        .sidebar {
+            display: none; /* Hide sidebar initially on mobile */
+        }
 
-      #InfoDialog > form > .buttons {
-        display: flex;
-        justify-content: end;
-      }
+        .sidebar a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #818181;
+            display: block;
+        }
 
-      #InfoDialog > form > .buttons > button {
-        padding: 0.3rem 1rem;
-        font-size: larger;
-      }
+        .sidebar a:hover {
+            color: #f1f1f1;
+        }
 
-      .pictureWrapper,
-      .personalInformation,
-      .password_section {
-        background-color: white;
-        border-radius: 1rem;
-        margin: 1rem;
-        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-      }
+        @media screen and (max-width: 2000px) {
+            .sidebar {
+                display: block; /* Show sidebar on mobile */
+                height: 100%;
+                width: 0px;
+                position: fixed;
+                z-index: 1;
+                top: 0;
+                left: 0;
+                background-color: #111;
+                overflow-x: hidden;
+                padding-top: 16px;
+            }
 
-      .pictureWrapper > .modify-btn,
-      .personalInformation > .modify-btn {
-        position: absolute;
-        top: 1rem;
-        right: 2rem;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        font-size: 20px;
-        gap: 0.31rem;
-        border: 1px solid #888;
-        padding: 0.4rem 1rem;
-        color: #888;
-        border-radius: 2rem;
-        cursor: pointer;
-        transition: all 500ms cubic-bezier(0.075, 0.82, 0.165, 1);
-      }
-
-      .pictureWrapper > .modify-btn:hover,
-      .personalInformation > .modify-btn:hover {
-        color: white;
-        background-color: #888;
-      }
-
-      .pictureWrapper > img {
-        height: 100px;
-        border-radius: 50%;
-      }
-
-      .pictureWrapper > div {
-        display: flex;
-        flex-direction: column;
-        padding-left: 2rem;
-      }
-
-      .pictureWrapper > div > .name {
-        font-size: 1.2rem;
-      }
-
-      .pictureWrapper > div > small {
-        margin: auto;
-      }
-
-      /* personal Information */
-
-      .personalInformation {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-        padding: 3rem;
-      }
-
-      .personalInformation > .personalInformation_info p {
-        font-size: 1.2rem;
-      }
-
-      /* CHANGE PASSWORD*/
-      .password_section {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        padding: 4rem;
-        gap: 2rem;
-      }
-
-      .password_section > input {
-        padding: 0.4rem 1rem;
-        font-size: 1.2rem;
-      }
+            .sidebar a {
+                font-size: 18px;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <aside>
-        <ul>
-          <li>
-            <a href="{{ url_for('my_courses') }}">My Courses</a>
+</head>
 
-          </li>
-          <li>
-            <a href="{{ url_for('create_course') }}">Add Courses</a>
-          </li>
-        </ul>
-        <div id="Adminprofile">
-          <a href="{{ url_for('teacherdashboard') }}">
-            <span class="material-symbols-outlined">manage_accounts</span>
-            <span>My Profile Setting</span>
-          </a>
-        </div>
-        <div id="Logout">
-          <a href="{{ url_for('tlogout') }}">
-            <span class="material-symbols-outlined">logout</span>
-            <span>Logout</span>
-          </a>
-        </div>
-      </aside>
-        <div id="AdminSettings">
-          <h1>Teacher Dashboard</h1>
-          <div class="pictureWrapper">
-            <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQqx9pBJfkUSmPEuYQonMG2Rv485S4b_aHo5IKAaGRcQsafeN8y" alt="Teacher">
-              <div>
-                  <span class="name">{{ teacher_data.name }}</span>
-                  <span class="jobTitle">{{ teacher_data.role }}</span>
-              </div>
-          </div>
-          <div class="personalInformation">
-              <div class="personalInformation_info">
-                  <span>EMAIL</span>
-                  <p>{{ teacher_data.email_id }}</p>
-              </div>
-              <div class="personalInformation_info">
-                  <span>DEPARTMENT</span>
-                  <p>{{ teacher_data.department }}</p>
-              </div>
-          </div>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.querySelector('.sidebar');
+            const menuIcon = document.getElementById('menuIcon');
+
+            // Open the sidebar on clicking the top-left icon
+            menuIcon.addEventListener('click', function () {
+                sidebar.style.width = sidebar.style.width === '200px' ? '0' : '200px';
+            });
+            // Toggle the expanded class for the icons in the top right corner
+            const icons = document.querySelectorAll('.icon-container');
+
+            icons.forEach(icon => {
+                icon.addEventListener('click', () => {
+                    icons.forEach(otherIcon => {
+                        if (otherIcon !== icon) {
+                            otherIcon.classList.remove('expanded');
+                        }
+                    });
+
+                    icon.classList.toggle('expanded');
+                });
+            });
+        });
+    </script>    
+    <div class="top-left-icon" id="menuIcon">
+        <img src="https://navnav.co/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBanNDIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--e711f83dd49a35b54bbe2b17c4a26164044aeacf/2019-12-29%2012.02.50.gif" alt="Menu" class="icon" id="menuIconImage">
+    </div>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <br><br><br>
+            <a href="{{ url_for('teacherdashboard') }}"><i class="fa fa-fw fa-home"></i> Home</a>
+            <br><br>
+            <a href="{{ url_for('my_courses') }}"><i class="fa fa-fw fa-graduation-cap"></i>My Courses</a>5
+            <br><br>
+            <a href="{{ url_for('create_course') }}"><i class="fa fa-plus"></i>Add Courses</a>
+            <br><br>
+            <a href="{{ url_for('tlogout') }}" style="color: #ff4444; position: absolute; bottom: 20px;"><i class="fa fa-fw fa-sign-out"></i> Logout</a>
         </div>
     </div>
-  </body>
+    <main>
+        <div id="AdminSettings">
+          <h1>Teacher Dashboard</h1>
+            <!-- Teacher Profile Information -->
+            <div class="pictureWrapper">
+                <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQqx9pBJfkUSmPEuYQonMG2Rv485S4b_aHo5IKAaGRcQsafeN8y" alt="Teacher">
+                <div>
+                    <span>NAME</span><br>
+                    <span class="name">{{ teacher_data.name }}</span>
+                    <br>
+                    <span>ROLE</span><br>
+                    <span class="jobTitle">{{ teacher_data.role }}</span>
+                </div>
+            </div>
+            <!-- Personal Information -->
+            <div class="personalInformation">
+                <div class="personalInformation_info">
+                    <span>EMAIL</span>
+                    <p>{{ teacher_data.email_id}}</p>
+                </div>
+                <div class="personalInformation_info">
+                    <span>DEPARTMENT</span>
+                    <p>{{ teacher_data.department }}</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
 </html>

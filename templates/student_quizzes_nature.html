@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ course_name }} -  Quizzes</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#1b1b1b">
+    <title>{{ course_name }} - Quizzes</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,7 +22,12 @@
             padding: 0;
             background-repeat: no-repeat;
             background-size: cover;
+            background-attachment: fixed; /* Added */
+            background-position: center; /* Added */
             background-image: url('https://i.pinimg.com/originals/6c/15/7a/6c157a668c99422c8b81348cc447ba89.gif');
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
         .container {
@@ -67,7 +76,7 @@
             box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
             padding: 2rem;
             position: relative;
-            width: 600px; /* Set width for two boxes in a row */
+            width: 100%; /* Set width to 100% for full-width on all devices */
         }
 
         .edit-button {
@@ -80,47 +89,69 @@
             display: inline-block; /* Added for inline alignment */
             margin-bottom: 10px; /* Added for spacing */
         }
-        span.instructions {
-            display: block;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f0f8ff; /* AliceBlue */
-            border: 1px solid #add8e6; /* LightBlue */
-            border-radius: 5px;
-            color: #333;
-          }
 
+        @media only screen and (min-width: 400px) {
+            /* Adjust styles for screens with a minimum width of 600px (e.g., tablets and larger) */
+            .course-container {
+                width: 200px; /* Adjust width for larger screens */
+            }
+        }
     </style>
 </head>
-<body>
+  <body>
     <h1>Quizzes for {{ course_name }}</h1>
-    <h2>Completed Quizzes</h2>
     <ul>
-        {% for quiz in completed_tests %}
-            <li class="course-container">
-                {{ quiz.quiz_name }} - {{ quiz.marks }} marks
-                (Conditional Marks: {{ quiz.condition_marks }}, Timer: {{ quiz.timer }} minutes)
-            </li>
-        {% endfor %}
+      {% for quiz in course_quizzes %}
+        <li class="course-container">
+          <a class="edit-button" href="javascript:void(0);" onclick="checkCoins({{ session['user_coins'] if 'user_coins' in session else 0 }}, '{{ course_name }}', '{{ quiz.quiz_name }}')">
+            {{ quiz.quiz_name }} - (Conditional Marks: {{ quiz.condition_marks }},Timer: {{ quiz.timer }} minutes)
+          </a>
+          <br>
+        </li>
+      {% endfor %}
     </ul>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+    <script>
+      function checkCoins(total_coins, course_name, quiz_name) {
+        // Assume you have a variable 'coinsRequired' representing the coins required to start the quiz
+        var coinsRequired = 250; // Replace with the actual required amount
 
-    <span class="instructions"
-      >Instructions: Use Hint costs - 10 coins 💰, Show Answer costs - 10 coins
-      💰 and 1 key 🗝, Add Extra Time costs - 1 heart ❤.</span
-    >
-    <span class="instructions"
-      >one you click next button you cant go to previous questions.</span
-    >
-    <!-- Non-Completed Quizzes Section -->
-    <h2>Non-Completed Quizzes</h2>
-    <ul>
-        {% for quiz in non_completed_tests %}
-            <li class="course-container">
-                    {{ quiz.quiz_name }} - (Conditional Marks: {{ quiz.condition_marks }}, Timer: {{ quiz.timer }} minutes)
-                    <a class="edit-button" href="{{ url_for('start_quiz', course_name=course_name, quiz_name=quiz.quiz_name) }}">Go to quizee</a>
-            </li>
-        {% endfor %}
-    </ul>
+        console.log("Total coins:", total_coins);
+        console.log("Course name:", course_name);
+        console.log("Quiz name:", quiz_name);
 
-</body>
+        if (total_coins >= coinsRequired) {
+          // User has enough coins, allow starting the quiz
+          console.log("User has enough coins. Redirecting to start the quiz.");
+          window.location.href = "/start_quiz/" + course_name + "/" + quiz_name;
+        } else {
+          // User does not have enough coins, show a message or take appropriate action
+          console.log(
+            "User does not have enough coins. Showing alert message."
+          );
+          alert(
+            "You don't have enough coins to start the quiz. Earn more coins!"
+          );
+        }
+      }
+
+    // Show instructions when the page loads
+    window.onload = function () {
+        showInstructions();
+    };
+
+    // Function to show instructions using SweetAlert2
+    function showInstructions() {
+        Swal.fire({
+            title: 'Instructions',
+            html: 'Use Hint costs - 10 coins 💰<br>' +
+                  'Show Answer costs - 10 coins 💰 and 1 key 🗝<br>' +
+                  'Add Extra Time costs - 1 heart ❤<br>' +
+                  'Once you click the next button, you can\'t go back to previous questions.',
+            icon: 'info',
+            confirmButtonText: 'Got it!'
+        });
+    }
+    </script>
+  </body>
 </html>

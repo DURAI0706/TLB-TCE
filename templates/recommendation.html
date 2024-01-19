@@ -1,130 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#1b1b1b">
     <title>Game Design Recommendation</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-ezB7XiHRkgkg63pkmHlIvgZVFTpLiGgK5Pn5Vwgtfr6jUZ+8yVxRRRi/XqjxljhP" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha384-ezB7XiHRkgkg63pkmHlIvgZVFTpLiGgK5Pn5Vwgtfr6jUZ+8yVxRRRi/XqjxljhP" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
-    
-    body {
-        font-family: 'Arial', sans-serif;
-        background-image: url('https://i.gifer.com/8eMu.gif');
-        background-size: cover;
-        color: #fff; /* Light text for better contrast */
-        margin: 0;
-        padding: 0;
-        background-repeat: no-repeat;        
-    }
-
-    .container {
-        max-width: 800px;
-        margin: 50px auto;
-        background-color: #333; /* Slightly darker container background */
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); /* Soft glow effect */
-    }
-
-    h1 {
-        text-align: center;
-        color: #fff;
-    }
-
-    form {
-        margin-top: 20px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 10px;
-        font-weight: bold;
-    }
-
-    select, textarea {
-        width: 100%;
-        padding: 12px;
-        margin-top: 5px;
-        margin-bottom: 15px;
-        border: 2px solid #4caf50; /* Green border for an interactive feel */
-        border-radius: 8px;
-        background-color: #333;
-        color: #fff;
-        outline: 2px solid #1a73e8; /* Multicolor outline */
-    }
-
-    input[type="submit"] {
-        background-color: #4caf50;
-        color: #fff;
-        padding: 15px 30px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 18px;
-        transition: background-color 0.3s ease; /* Smooth hover effect */
-    }
-
-    input[type="submit"]:hover {
-        background-color: #45a049;
-    }
-
-    #fullscreen-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            justify-content: center;
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://i.gifer.com/8eMu.gif');
+            background-size: cover;
+            color: #fff;
             align-items: center;
-            z-index: 1000;
+            justify-content: center;
+            height: 100vh;
         }
 
-    #fullscreen-image {
-            max-width: 90%;
-            max-height: 90%;
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
         }
 
-    #close-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: white;
-            font-size: 20px;
+        h1 {
+            text-align: center;
+            color: #fff;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        select,
+        textarea,
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            background-color: #333;
+            color: #fff;
+            outline: 2px solid #1a73e8;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-    /* Additional styles for the selected theme and image previews */
-    img {
-        display: block;
-        margin-top: 10px;
-        border-radius: 8px;
-        max-width: 100%;
-        height: auto;
-        outline: 2px solid #ffcc00; /* Yellow outline for images */
-    }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
 
-    /* Styling for the game theme and image selection */
-    #FavoriteThemeImage,
-    #PointsDesignImage,
-    #BadgeDesignImage,
-    #LeaderboardDesignImage,
-    #LevelDesignImage,
-    #AppreciationAnimationImage {
-        border: 2px solid #4caf50; /* Green border for selected images */
-    }
+        img {
+            display: block;
+            margin-top: 10px;
+            border-radius: 8px;
+            max-width: 100%;
+            height: auto;
+            outline: 2px solid #ffcc00;
+        }
 
+        @media only screen and (max-width: 600px) {
+            h1 {
+                font-size: 24px;
+            }
+
+            select,
+            textarea,
+            input[type="submit"] {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>Game Design Recommendation</h1>
         <form action="{{ url_for('recommendation') }}" method="post">
             <div class="form-group">
                 <label for="Gender">1) Gender:</label>

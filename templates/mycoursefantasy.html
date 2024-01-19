@@ -2,12 +2,15 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#1b1b1b">
+    <title>My Courses</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet" />
@@ -17,14 +20,15 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background: repeat 3px;
+            background: no-repeat;
+            background-attachment: fixed; /* Added */
+            background-position: center; /* Added */
             background-size: cover;
-            background-position: center;
             background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/65e63729-532b-458e-aa16-f693151bda5c/dfshbim-40c694b9-c12a-47f1-8ecd-f2ca8d5cdcb3.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzY1ZTYzNzI5LTUzMmItNDU4ZS1hYTE2LWY2OTMxNTFiZGE1Y1wvZGZzaGJpbS00MGM2OTRiOS1jMTJhLTQ3ZjEtOGVjZC1mMmNhOGQ1Y2RjYjMuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.j40rM3O8QP_7obWRLgZZtaiMUUon1b0WpWB67aIa3tE');
         }
         .container {
             display: flex;
-            position: relative;
+            flex-direction: column;
         }
 
         .top-left-icon {
@@ -42,7 +46,7 @@
 
         .sidebar {
             height: 100%;
-            width: 160px;
+            width: 100%;
             position: fixed;
             z-index: 1;
             top: 0;
@@ -50,6 +54,7 @@
             background-color: #111;
             overflow-x: hidden;
             padding-top: 16px;
+            display: none;
         }
 
         .sidebar a {
@@ -65,48 +70,35 @@
         }
 
         .content {
-            margin-left: 200px;
+            margin-left: 0;
             padding: 1px 16px;
-            height: 1000px;
             flex: 1;
         }
 
-        .logo {
-            text-align: center;
-        }
-
-        .logo h1 {
-            margin: 0;
-            font-size: 1.5em;
-            color: #fff; /* Set the color for the logo text */
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        a {
-            text-decoration: none;
+        h1, h2 {
             color: #fff;
-            display: flex;
-            align-items: center;
         }
 
-        .material-symbols-outlined {
-            margin-right: 10px;
+        .course-container {
+            background-color: white;
+            border-radius: 1rem;
+            margin: 1rem;
+            box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+            padding: 2rem;
+            position: relative;
+            width: 600px; /* Full width on all screens */
         }
 
-        h1 {
-            color: #fff; /* Set the color for the heading */
-        }
-
-        h2 {
-            color: #fff; /* Set the color for the subheadings */
+        .edit-button, .attribute-button {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
         }
 
         .top-right-icons {
@@ -122,8 +114,8 @@
             cursor: pointer;
             margin-left: 10px;
             overflow: hidden;
-            width: 80px;
-            height: 80px;
+            width: 40px;
+            height: 40px;
         }
 
         .icon {
@@ -145,48 +137,28 @@
             display: block;
         }
 
-        .course-container {
-            background-color: white;
-            border-radius: 1rem;
-            margin: 1rem;
-            box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-            padding: 2rem;
-            opacity: 0.8;
-            position: relative;
-            width: calc(60% - 2rem); /* Set width for two boxes in a row */
-        }
-
-        .edit-button {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-        }
-
-        .attribute-button {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-        }
-
-        @media screen and (max-height: 450px) {
-            .sidebar {
-                padding-top: 15px;
+        @media screen and (max-width: 2000px) {
+            .container {
+                flex-direction: column;
             }
-
+            .sidebar {
+                display: block; /* Show sidebar on mobile */
+                height: 100%;
+                width: 0px;
+                position: fixed;
+                z-index: 1;
+                top: 0;
+                left: 0;
+                background-color: #111;
+                overflow-x: hidden;
+                padding-top: 16px;
+            }
             .sidebar a {
                 font-size: 18px;
+            }
+
+            .top-right-icons {
+                display: none; /* Hide icons on smaller screens */
             }
         }
     </style>
@@ -198,11 +170,10 @@
             const sidebar = document.querySelector('.sidebar');
             const menuIcon = document.getElementById('menuIcon');
 
-            // Open the sidebar on clicking the top-left icon
             menuIcon.addEventListener('click', function () {
                 sidebar.style.width = sidebar.style.width === '200px' ? '0' : '200px';
             });
-            // Toggle the expanded class for the icons in the top right corner
+
             const icons = document.querySelectorAll('.icon-container');
 
             icons.forEach(icon => {
@@ -231,17 +202,11 @@
         <br><br>
         <a href="{{ url_for('student_courses') }}"><i class="fa fa-fw fa-graduation-cap"></i> Courses</a>
         <br><br>
-        <a href="#teachers"><i class="fa fa-fw fa-users"></i> Teachers</a>
-        <br><br>
-        <a href="#leaderboard"><i class="fa fa-fw fa-trophy"></i> Leaderboard</a>
-        <br><br>
-        <a href="#contact"><i class="fa fa-fw fa-envelope"></i> Contact</a>
-        <br><br>
         <a href="{{ url_for('slogout') }}" style="color: #ff4444; position: absolute; bottom: 20px;"><i class="fa fa-fw fa-sign-out"></i> Logout</a>
     </div>
-
     <!-- Content -->
     <div class="content">
+        <br><br><br>
         <h1>My Courses</h1>
 
         <!-- Display joined courses -->

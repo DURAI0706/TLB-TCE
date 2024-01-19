@@ -87,24 +87,21 @@
     </style>
 </head>
 <body>
-
     <h1>Fill Assignment</h1>
-
     <div class="course-container"> 
-        <form action="{{ url_for('completed_assignment', course_name=course_name, quiz_name=quiz_name,assignment_name=assignment_name) }}" method="post">        <!-- Display assignment questions for horror theme -->
+        <form action="{{ url_for('completed_assignment', course_name=course_name, quiz_name=quiz_name, assignment_name=assignment_name) }}" method="post">
             {% for question in questions %}
                 <div>
                     <p>{{ question.question }}</p>
-                    <label for="answer_{{ loop.index }}">Your Answer:</label>
-                    <input type="text" id="answer_{{ loop.index }}" name="answer_{{ loop.index }}" required>
+                    <label for="user_answer_{{ question.id }}">Your Answer:</label>
+                    <input type="text" id="user_answer_{{ question.id }}" name="user_answer_{{ question.id }}" required>
+                    <input type="hidden" name="question_{{ question.id }}" value="{{ question.question }}">
                 </div>
             {% endfor %}
-                <br><br>
+            <br><br>
             <!-- Submit button -->
-            <button  class="edit-button" type="submit">Submit Assignment</button>
+            <button class="edit-button" type="submit">Submit Assignment</button>
         </form>
     </div>
-    <!-- Add any additional content or scripts as needed -->
-
 </body>
 </html>

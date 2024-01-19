@@ -24,11 +24,14 @@
             border-radius: 10px;
             padding: 20px;
             text-align: center;
+            width: 80%; /* Adjust width as needed */
+            max-width: 400px; /* Set a max-width for better readability on larger screens */
         }
 
         .role-container {
             display: flex;
-            justify-content: space-around;
+            flex-direction: column; /* Stack roles vertically on small screens */
+            align-items: center;
             margin-top: 20px;
         }
 
@@ -38,27 +41,31 @@
             padding: 20px;
             cursor: pointer;
             transition: transform 0.3s ease-in-out;
+            margin-bottom: 15px; /* Add some spacing between roles */
+            width: 100%; /* Make roles fill the container */
+            box-sizing: border-box; /* Include padding and border in the width */
         }
 
         .role img {
-            width: 120px;
-            height: 120px;
+            width: 80px; /* Adjust size as needed */
+            height: 80px; /* Adjust size as needed */
             object-fit: cover;
             border-radius: 50%;
         }
 
         .role p {
             margin: 10px 0;
-            font-size: 18px;
+            font-size: 16px; /* Adjust font size as needed */
             font-weight: bold;
         }
 
         .role:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .role-link {
             text-decoration: none;
+            width: 100%;
         }
 
         h2 {

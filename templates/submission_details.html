@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz and Assignment Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .edit-input {
+            width: 50px;
+        }
+
+        .edit-ontime {
+            width: 50px;
+        }
+
+        .save-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #notification {
+            display: none;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2>Select Course, Quiz, and Assignment</h2>
+    <form method="POST" action="/submission_details">
+        <label for="course_name">Select Course Name:</label>
+        <select name="course_name">
+            {% for course_name in unique_course_names %}
+                <option value="{{ course_name }}" {% if course_name == selected_course %}selected{% endif %}>{{ course_name }}</option>
+            {% endfor %}
+        </select>
+        
+        <label for="quiz_name">Select Quiz Name:</label>
+        <select name="quiz_name">
+            {% for quiz in unique_quiz_names %}
+                <option value="{{ quiz }}">{{ quiz }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="assignment_name">Select Assignment:</label>
+        <select name="assignment_name">
+            {% for assignment in unique_assignments %}
+                <option value="{{ assignment }}">{{ assignment }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="submit" value="Submit">
+    </form>
+    
+    {% if data %}
+    <h2>Results</h2>
+    <table>
+        <tr>
+            <th>User Email</th>
+            <th>User Answer</th>
+            <th>Question</th>
+            <th>Task 1</th>
+            <th>Attendance</th>
+            <th>Preparation</th>
+            <th>On Time</th>
+            <th>Assessment Mark</th>
+            <th></th><!-- Empty header for Save button column -->
+        </tr>
+        {% for entry in data %}
+            <tr>
+                <td>{{ entry.email }}</td>
+                <td>
+                    {% if entry.assignments and assignment_name in entry.assignments %}
+                        <a href="{{ entry.assignments[assignment_name].user_answer }}" target="_blank">Open Google Drive</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if entry.assignments and assignment_name in entry.assignments %}
+                        {{ entry.assignments[assignment_name].question }}
+                    {% endif %}
+                </td>
+                <td>
+                    <input class="edit-task1" type="number" value="{% if 'task1' in entry %}{{ entry.task1 }}{% endif %}" min="0" max="50">
+                </td>
+                <td>
+                    <input class="edit-attendance" type="number" value="{% if 'attendance' in entry %}{{ entry.attendance }}{% endif %}" min="0" max="5">
+                </td>
+                <td>
+                    <input class="edit-preparation" type="number" value="{% if 'preparation' in entry %}{{ entry.preparation }}{% endif %}" min="0" max="5">
+                </td>
+                <td>
+                    <input class="edit-ontime" type="number" value="{% if 'ontime' in entry %}{{ entry.ontime }}{% endif %}" min="0" max="5">
+                </td>
+                <td>
+                    <input class="edit-input" type="number" value="{% if 'assessment_mark' in entry %}{{ entry.assessment_mark }}{% endif %}" min="0" max="25">
+                </td>
+                <td>
+                    <button class="save-button" onclick="saveValues('{{ entry.email }}', '{{ entry.total_marks }}', '{{ entry.quiz_name }}', '{{ entry.learning_level }}', '{{ entry.course_name }}')">Save</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+
+
+    <!-- Notification div for save success/error -->
+    <div id="notification"></div>
+
+    <script>
+        function saveValues(userEmail, total_marks, quiz_name,learning_level,course_name) {
+            console.log('course_name:', course_name);
+            var task1Input = document.querySelector('.edit-task1');
+            var attendanceInput = document.querySelector('.edit-attendance');
+            var preparationInput = document.querySelector('.edit-preparation');
+            var ontimeInput = document.querySelector('.edit-ontime');
+            var assessmentMarkInput = document.querySelector('.edit-input');
+    
+            var task1 = parseInt(task1Input.value);
+            var attendance = parseInt(attendanceInput.value);
+            var preparation = parseInt(preparationInput.value);
+            var ontime = parseInt(ontimeInput.value);
+            var assessmentMark = parseInt(assessmentMarkInput.value);
+
+    
+            // Check constraints
+            if (task1 < 0 || task1 > 50 || attendance < 0 || attendance > 5 || preparation < 0 || preparation > 5 || ontime < 0 || ontime > 5 || assessmentMark < 0 || assessmentMark > 100) {
+                showNotification('Invalid values. Please check constraints.');
+                return;
+            }
+    
+            // AJAX request to send the values to the server and update the database
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/save_values', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        showNotification('Save successful!');
+                    } else {
+                        showNotification('Error saving values!');
+                    }
+                }
+            };
+
+
+            xhr.send(JSON.stringify({
+                userEmail: userEmail,
+                task1: task1,
+                attendance: attendance,
+                preparation: preparation,
+                ontime: ontime,
+                assessmentMark: assessmentMark,
+                total_marks: total_marks,
+                quiz_name: quiz_name,
+                ll : learning_level,
+                course_name : course_name
+            }));
+    
+            // Send the data as JSON
+  
+        }
+    
+        function showNotification(message) {
+            var notificationDiv = document.getElementById('notification');
+            notificationDiv.innerHTML = message;
+            notificationDiv.style.display = 'block';
+    
+            // Hide the notification after 3 seconds
+            setTimeout(function () {
+                notificationDiv.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+    
+</body>
+</html>

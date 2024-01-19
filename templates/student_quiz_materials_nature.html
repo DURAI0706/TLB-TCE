@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ course_name }} - Quizzes</title>
+    <title>{{ course_name }} - Materials</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,7 +18,12 @@
             padding: 0;
             background-repeat: no-repeat;
             background-size: cover;
+            background-attachment: fixed; /* Added */
+            background-position: center; /* Added */
             background-image: url('https://i.pinimg.com/originals/6c/15/7a/6c157a668c99422c8b81348cc447ba89.gif');
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
         .container {
@@ -67,7 +72,7 @@
             box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
             padding: 2rem;
             position: relative;
-            width: 250px; /* Set width for two boxes in a row */
+            width: 100%; /* Set width to 100% for full-width on all devices */
         }
 
         .edit-button {
@@ -81,10 +86,16 @@
             margin-bottom: 10px; /* Added for spacing */
         }
 
+        @media only screen and (min-width: 400px) {
+            /* Adjust styles for screens with a minimum width of 600px (e.g., tablets and larger) */
+            .course-container {
+                width: 200px; /* Adjust width for larger screens */
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>{{ course_name }} -Quizzes</h1>
+    <h1>{{ course_name }} - Materials</h1>
     <div class="course-container">
         <ul>
             {% for quiz in quizzes %}

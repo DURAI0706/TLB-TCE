@@ -1,9 +1,11 @@
 from urllib.parse import quote_plus
+import random
 from flask import Flask, render_template, request, redirect, flash, session, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from transformers import PreTrainedTokenizerFast, TFBertForSequenceClassification
 import os
+from flask_cors import CORS
 import bcrypt  
 import joblib
 from transformers import AutoTokenizer, TFAutoModel
@@ -55,9 +57,10 @@ new_collection=db['new_users']
 mannur_collection=db['mannur']
 students_assignment=db['student_assignment']
 learning_collection=db['learning_level']
-leaderboard_collection=db['leaderboard']
 collection = db["student_assignment"]
+collection2 = db["assignment"]
 
+CORS(app)
 
 def get_unique_options():
     unique_courses = collection.distinct("course_name")
@@ -120,8 +123,8 @@ def student_register():
             'password': hashed_password,
             'learning_level':'average learner',
             'role': 'student',
-            'total_coins':500,
-            'total_keys' :1,
+            'total_coins':250,
+            'total_keys' :2,
             'total_heart' :2
         }
         result = student_collection.insert_one(user_data)
@@ -496,6 +499,107 @@ def user_profile():
             except jinja2.exceptions.TemplateNotFound:
                 return render_template('default_template.html', student_data=template_context)
 
+collection3 = db.students
+db = client.gamification
+collection3 = db.students
+collection4 = db.slow
+collection5 = db.average
+collection6 = db.quick
+mycourses_collection = db.mycourses  # Adding mycourses collection
+
+def fetch_leaderboard_data(user_email, course_name, quiz_name):
+    try:
+        # Fetch the learning level from the 'students' collection
+        student_data = collection3.find_one({'email': user_email, 'course_name': course_name})
+        learning_level = student_data.get('learning_level')
+
+        # Fetch data for all learning levels
+        quick_leaderboard_data = list(collection6.find({'quiz_name': quiz_name, 'course_name': course_name}))
+        average_leaderboard_data = list(collection5.find({'quiz_name': quiz_name, 'course_name': course_name}))
+        slow_leaderboard_data = list(collection4.find({'quiz_name': quiz_name, 'course_name': course_name}))
+
+        # Check if the required fields exist
+        if quick_leaderboard_data!=[]:
+            # Convert MongoDB cursor to DataFrame
+            quick_df = pd.DataFrame(quick_leaderboard_data)
+            # Rank students based on total_marks
+            quick_df['rank'] = quick_df['total_point'].rank(ascending=False, method='min')
+            # Sort the DataFrame by rank
+            quick_df = quick_df.sort_values(by='rank')
+            # Highlight the row corresponding to the viewing student
+            quick_df['highlight'] = quick_df['user_email'] == user_email
+
+        if average_leaderboard_data!=[]:
+            average_df = pd.DataFrame(average_leaderboard_data)
+            average_df['rank'] = average_df['total_point'].rank(ascending=False, method='min')
+            average_df = average_df.sort_values(by='rank')
+            average_df['highlight'] = average_df['user_email'] == user_email
+
+        if slow_leaderboard_data!=[]:
+            slow_df = pd.DataFrame(slow_leaderboard_data)
+            slow_df['rank'] = slow_df['total_point'].rank(ascending=False, method='min')
+            slow_df = slow_df.sort_values(by='rank')
+            slow_df['highlight'] = slow_df['user_email'] == user_email
+
+        return (
+            quick_df.to_dict(orient='records') if 'quick_df' in locals() else [],
+            average_df.to_dict(orient='records') if 'average_df' in locals() else [],
+            slow_df.to_dict(orient='records') if 'slow_df' in locals() else []
+        )
+
+    except Exception as e:
+        raise ValueError(str(e))
+
+
+@app.route('/<user_email>', methods=['GET', 'POST'])
+def leaderboard(user_email):
+    try:
+        # Fetch the user's courses from the 'mycourses' collection
+        user_courses_cursor = collection3.find({'email': user_email}, {'course_name': 1})
+        user_courses = [doc['course_name'] for doc in user_courses_cursor]
+        selected_course = None
+        unique_quiz_names = []
+
+        # Check if the form is submitted
+        if request.method == 'POST':
+            selected_course = request.form.get('course_name')
+            selected_quiz = request.form.get('quiz_name')
+            unique_quiz_names = collection3.distinct('quiz_name', {'course_name': selected_course})
+
+            if selected_quiz is not None:
+                # Fetch the data from the corresponding collection based on learning level and quiz name
+                quick_leaderboard_data, average_leaderboard_data, slow_leaderboard_data = fetch_leaderboard_data(user_email, selected_course, selected_quiz)
+
+                return render_template('leaderboard.html', user_email=user_email,
+                                       unique_courses=user_courses, selected_course=selected_course,
+                                       quick_leaderboard_data=quick_leaderboard_data,
+                                       average_leaderboard_data=average_leaderboard_data,
+                                       slow_leaderboard_data=slow_leaderboard_data,
+                                       unique_quiz_names=unique_quiz_names, selected_quiz=selected_quiz)
+
+        # On initial load, provide default values or handle as needed
+        return render_template('leaderboard.html', user_email=user_email,
+                               unique_courses=user_courses, selected_course=selected_course,
+                               quick_leaderboard_data=[], average_leaderboard_data=[], slow_leaderboard_data=[],
+                               unique_quiz_names=unique_quiz_names, selected_quiz=None)
+
+    except Exception as e:
+        # Handle the exception, log it, or return an error page
+        return render_template('error.html', error=str(e))
+
+# Add this endpoint to fetch quiz names dynamically
+@app.route('/get_quiz_names/<user_email>', methods=['POST'])
+def get_quiz_names(user_email):
+    try:
+        selected_course = request.form.get('course_name')
+        unique_quiz_names = collection3.distinct('quiz_name', {'course_name': selected_course})
+
+        return jsonify({'quiz_names': unique_quiz_names})
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+
 @app.route('/mycourses/student', methods=['GET', 'POST'])
 def student_courses():
     user_email = session.get('email') or session.get('student_email')
@@ -561,6 +665,8 @@ def individual_course(course_name):
         return render_template('individual_course_nature.html', course=joined_course)
     else:
         return render_template('individual_course_fantasy.html', course=joined_course)
+    
+
 
 def get_quizzes(course_name):
     quiz_collection = db['quiz']
@@ -577,28 +683,71 @@ def get_recommendation_result(user_email):
     recommendation_data = recommendation_collection.find_one({'user_id': user_email})
     return recommendation_data.get('recommendation') if recommendation_data else None
 
-@app.route('/see_quizzes/<course_name>', methods=['GET'])
+@app.route("/see_quizzes/<course_name>", methods=["GET"])
 def see_quizzes(course_name):
     course_quizzes = get_quizzes(course_name)
-    if 'email' in session and 'student_email' in session:
-        email = session['email']
-        student_email = session['student_email']
-        user_email = email  
-    elif 'email' in session:
-        user_email = session['email']
-    elif 'student_email' in session:
-        user_email = session['student_email']
+
+    # Initialize variables with default values
+    user_email = None
+    total_coins = 0
+
+    if "email" in session and "student_email" in session:
+        # Both emails are present, handle accordingly
+        email = session["email"]
+        student_email = session["student_email"]
+        # Use one of them based on your logic
+        user_email = email  # For example, use 'email'
+
+        # Assuming you have a MongoDB connection and student_collection defined
+
+    elif "email" in session:
+        # Retrieve the user email from the session
+        user_email = session["email"]
+    elif "student_email" in session:
+        # Retrieve the student email from the session
+        user_email = session["student_email"]
     else:
-        return redirect('/role')
-    completed_tests = get_completed_quizzes(user_email, course_name)
-    non_completed_tests = [quiz for quiz in course_quizzes if quiz['quiz_name'] not in [completed_quiz['quiz_name'] for completed_quiz in completed_tests]]
+        # Redirect to login if neither 'email' nor 'student_email' is in the session
+        return redirect("/role")
+
+    # Retrieve the user's coins from the database and store it in the session
+    student_data = student_collection.find_one({"email": user_email})
+    if student_data:
+        total_coins = student_data.get("total_coins", 0)
+        session["user_coins"] = total_coins
+
+    # Get recommendation result based on user email
     recommendation_result = get_recommendation_result(user_email)
-    if recommendation_result == 'based on above we recommend you horror theme to nourish and to grow':
-        return render_template('student_quizzes_horror.html', course_name=course_name, completed_tests=completed_tests, non_completed_tests=non_completed_tests)
-    elif recommendation_result == 'based on above we recommend you nature content theme to nourish and to grow':
-        return render_template('student_quizzes_nature.html', course_name=course_name, completed_tests=completed_tests, non_completed_tests=non_completed_tests)
+
+    print(f"Total coins for user {user_email}: {total_coins}")
+
+    if (
+        recommendation_result
+        == "based on above we recommend you horror theme to nourish and to grow"
+    ):
+        return render_template(
+            "student_quizzes_horror.html",
+            course_name=course_name,
+            course_quizzes=course_quizzes,
+            total_coins=total_coins,
+        )
+    elif (
+        recommendation_result
+        == "based on above we recommend you nature content theme to nourish and to grow"
+    ):
+        return render_template(
+            "student_quizzes_nature.html",
+            course_name=course_name,
+            course_quizzes=course_quizzes,
+            total_coins=total_coins,
+        )
     else:
-        return render_template('student_quizzes_fantasy.html', course_name=course_name, completed_tests=completed_tests, non_completed_tests=non_completed_tests)
+        return render_template(
+            "student_quizzes_fantasy.html",
+            course_name=course_name,
+            course_quizzes=course_quizzes,
+            total_coins=total_coins,
+)
 
 def get_user_recommendation_result(user_email):
     recommendation_data = recommendation_collection.find_one({'user_id': user_email})
@@ -635,6 +784,12 @@ def start_quiz(course_name, quiz_name):
     total_coins = student_data.get('total_coins', 0)
     total_keys = student_data.get('total_keys', 0)
     total_heart = student_data.get('total_heart', 0)
+    for question in questions:
+        question_text = question.get('question', '')
+        choices = question.get('choices', [])
+        correct_answer = question.get('correct_answer', '')
+        hint = question.get('hint', '')
+        question_type = question.get('type', '')
     if quiz is None:
         return "Quiz not found"
     if request.method == 'POST':
@@ -645,8 +800,14 @@ def start_quiz(course_name, quiz_name):
         for i, question in enumerate(questions):
             question_key = f'question_{i}'
             if question_key in user_answers and user_answers[question_key] == question['correct_answer']:
-                total_marks += 1
+                total_marks += 2
         print('total marks', total_marks)
+        show_answer_clicks = int(request.form.get('showAnswerClickscount', 0))
+        use_hint_clicks = request.form.get('useHintClicks', 0, type=int)
+        add_extra_time_clicks = request.form.get('addExtraTimeClicks', 0, type=int)
+        print('show_answer_clicks:',show_answer_clicks)
+        print('use_hint_clicks:',use_hint_clicks)
+        print('add_extra_time_clicks',add_extra_time_clicks)
         # 2) Time Taken to Submit Quiz
         if quiz_start_time:
             quiz_end_time = datetime.now()
@@ -701,9 +862,9 @@ def start_quiz(course_name, quiz_name):
         elif new_datas is not None and slow_data is None and  total_marks > quiz['condition_marks']:
             print("Condition 2: new_datas is not None and total_marks > quiz['condition_marks']")
             new_collection.delete_one({'email': user_email})
-            if correct_ratio > 0.85:
+            if correct_ratio > 0.80:
                 user_type = 'quick learner'
-            elif 0.81 <= correct_ratio <= 0.84:
+            elif 0.50 <= correct_ratio <= 0.79:
                 user_type = 'average learner'
             else:
                 user_type = 'slow learner'
@@ -717,32 +878,28 @@ def start_quiz(course_name, quiz_name):
                 'course_name': course_name,
                 'quiz_name': quiz_name,
                 'submission_date': datetime.now().strftime('%Y-%m-%d'),
-                'quiz_badges': quiz_badges
+                'quiz_badges': quiz_badges,
+                'add_extra_time clicks':add_extra_time_clicks,
+                'use_hint_clicks':use_hint_clicks,
+                'show_answer_clicks':show_answer_clicks
             })
-            leaderboard_collection.insert_one({
-                'email': user_email,
-                'learning_level': user_type,
-                'total_marks': total_marks,
-                'course_name': course_name,
-                'quiz_name': quiz_name,
-                'submission_date': datetime.now().strftime('%Y-%m-%d')
-            })
+            
             learning_collection.update_one(
                 {'email': user_email},
                 {'$set': {'learning_level':user_type}}
             )
             student_collection.update_one(
                 {'email': user_email},
-                {'$set': {'total_coins': total_coins+100,
+                {'$set': {'total_coins': total_coins+50,
                         'total_heart': total_heart+2,
                         'total_keys': total_keys+1}}
             )
             if recommendation_result == 'based on above we recommend you horror theme to nourish and to grow':
-                return redirect(url_for('quiz_result_horror', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio))
+                return redirect(url_for('quiz_result_horror', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio,quiz_badges=quiz_badges))
             elif recommendation_result == 'based on above we recommend you nature content theme to nourish and to grow':
-                return redirect(url_for('quiz_result_nature', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio))
+                return redirect(url_for('quiz_result_nature', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio,quiz_badges=quiz_badges))
             else:
-                return redirect(url_for('quiz_result_fantasy', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio))
+                return redirect(url_for('quiz_result_fantasy', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio,quiz_badges=quiz_badges))
         elif slow_data is not None and second_time is None and new_datas is None and  total_marks <= quiz['condition_marks']:
             print("condition no 3 is taking to action")
             slow_collection.update_one(
@@ -807,9 +964,9 @@ def start_quiz(course_name, quiz_name):
         elif slow_data is not None and second_time is None and new_datas is None and  total_marks > quiz['condition_marks']:
             print("Condition 5 : is incoming")
             slow_collection.delete_one({'email': user_email})
-            if correct_ratio > 0.85:
+            if correct_ratio > 0.80:
                 user_type = 'quick learner'
-            elif 0.81 <= correct_ratio <= 0.84:
+            elif 0.50 <= correct_ratio <= 0.79:
                 user_type = 'average learner'
             else:
                 user_type = 'slow learner'
@@ -824,32 +981,28 @@ def start_quiz(course_name, quiz_name):
                 'course_name': course_name,
                 'quiz_name': quiz_name,
                 'submission_date': datetime.now().strftime('%Y-%m-%d'),
-                'quiz_badges':quiz_badges
+                'quiz_badges': quiz_badges,
+                'add_extra_time clicks':add_extra_time_clicks,
+                'use_hint_clicks':use_hint_clicks,
+                'show_answer_clicks':show_answer_clicks
             })
+            
             student_collection.update_one(
                 {'email': user_email},
-                {'$set': {'total_coins': total_coins+100,
+                {'$set': {'total_coins': total_coins+50,
                           'total_heart': total_heart+2,
                           'total_keys': total_keys+1}}
             )
-            leaderboard_collection.insert_one({
-                'email': user_email,
-                'learning_level': user_type,
-                'total_marks': total_marks,
-                'course_name': course_name,
-                'quiz_name': quiz_name,
-                'submission_date': datetime.now().strftime('%Y-%m-%d')
-            })
             learning_collection.update_one(
                 {'email': user_email},
                 {'$set': {'learning_level':user_type}}
             )
             if recommendation_result == 'based on above we recommend you horror theme to nourish and to grow':
-                return redirect(url_for('quiz_result_horror', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio))
+                return redirect(url_for('quiz_result_horror', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio,quiz_badges=quiz_badges))
             elif recommendation_result == 'based on above we recommend you nature content theme to nourish and to grow':
-                return redirect(url_for('quiz_result_nature', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio))
+                return redirect(url_for('quiz_result_nature', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio,quiz_badges=quiz_badges))
             else:
-                return redirect(url_for('quiz_result_fantasy', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio))
+                return redirect(url_for('quiz_result_fantasy', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio,quiz_badges=quiz_badges))
         elif second_time is  not None and slow_data is  not None and new_datas is None and  total_marks > quiz['condition_marks']:
             print("condition 6 is cming")
             slow_collection.delete_one({'email': user_email})
@@ -858,36 +1011,62 @@ def start_quiz(course_name, quiz_name):
             print('predicted_learning_level:', predicted_learning_level)
             student_collection.update_one(
                 {'email': user_email},
-                {'$set': {'total_coins': total_coins+100,
+                {'$set': {'total_coins': total_coins+50,
                         'total_heart': total_heart+2,
                         'total_keys': total_keys+1}}
             )
-            students_collection.insert_one({
+            existing_record = students_collection.find_one({
                 'email': user_email,
-                'learning_level': predicted_learning_level,
-                'correct_ratio': correct_ratio,
-                'total_marks': total_marks,
-                'highest_incorrect_type': highest_incorrect_type,
-                'time_taken': time_taken,
                 'course_name': course_name,
-                'quiz_name': quiz_name,
-                'submission_date': datetime.now().strftime('%Y-%m-%d'),
-                'quiz_badges':quiz_badges
-
+                'quiz_name': quiz_name
             })
+
+            if existing_record:
+                # Update the existing record
+                print("bro it is cming)")
+                students_collection.update_one(
+                    {
+                        'email': user_email,
+                        'course_name': course_name,
+                        'quiz_name': quiz_name,
+                    },
+                    {
+                        '$set': {
+                            'learning_level': predicted_learning_level,
+                            'correct_ratio': correct_ratio,
+                            'total_marks': total_marks,
+                            'highest_incorrect_type': highest_incorrect_type,
+                            'time_taken': time_taken,
+                            'submission_date': datetime.now().strftime('%Y-%m-%d'),
+                            'quiz_badges': quiz_badges,
+                            'add_extra_time clicks': add_extra_time_clicks,
+                            'use_hint_clicks': use_hint_clicks,
+                            'show_answer_clicks': show_answer_clicks
+                        }
+                    }
+                )
+            else:
+                # Insert a new record
+                print("TYAGA")
+                students_collection.insert_one({
+                    'email': user_email,
+                    'learning_level': predicted_learning_level,
+                    'correct_ratio': correct_ratio,
+                    'total_marks': total_marks,
+                    'highest_incorrect_type': highest_incorrect_type,
+                    'time_taken': time_taken,
+                    'course_name': course_name,
+                    'quiz_name': quiz_name,
+                    'submission_date': datetime.now().strftime('%Y-%m-%d'),
+                    'quiz_badges': quiz_badges,
+                    'add_extra_time clicks': add_extra_time_clicks,
+                    'use_hint_clicks': use_hint_clicks,
+                    'show_answer_clicks': show_answer_clicks
+                })
             learning_collection.update_one(
                 {'email': user_email},
                 {'$set': {'learning_level':predicted_learning_level}}
             )
-            leaderboard_collection.insert_one({
-                'email': user_email,
-                'learning_level': predicted_learning_level,
-                'total_marks': total_marks,
-                'course_name': course_name,
-                'quiz_name': quiz_name,
-                'submission_date': datetime.now().strftime('%Y-%m-%d')
-
-            })
             if recommendation_result == 'based on above we recommend you horror theme to nourish and to grow':
                 return redirect(url_for('quiz_result_horror', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio))
             elif recommendation_result == 'based on above we recommend you nature content theme to nourish and to grow':
@@ -931,36 +1110,62 @@ def start_quiz(course_name, quiz_name):
             print('predicted_learning_level:', predicted_learning_level)
             student_collection.update_one(
                 {'email': user_email},
-                {'$set': {'total_coins': total_coins+100,
+                {'$set': {'total_coins': total_coins+50,
                         'total_heart': total_heart+2,
                         'total_keys': total_keys+1}}
             )
+            existing_record = students_collection.find_one({
+                'email': user_email,
+                'course_name': course_name,
+                'quiz_name': quiz_name
+            })
+
+            if existing_record:
+                print("siuuu")
+                # Update the existing record
+                students_collection.update_one(
+                    {
+                        'email': user_email,
+                        'course_name': course_name,
+                        'quiz_name': quiz_name,
+                    },
+                    {
+                        '$set': {
+                            'learning_level': predicted_learning_level,
+                            'correct_ratio': correct_ratio,
+                            'total_marks': total_marks,
+                            'highest_incorrect_type': highest_incorrect_type,
+                            'time_taken': time_taken,
+                            'submission_date': datetime.now().strftime('%Y-%m-%d'),
+                            'quiz_badges': quiz_badges,
+                            'add_extra_time clicks': add_extra_time_clicks,
+                            'use_hint_clicks': use_hint_clicks,
+                            'show_answer_clicks': show_answer_clicks
+                        }
+                    }
+                )
+            else:
+                # Insert a new record
+                print("ronaldoooo")
+                students_collection.insert_one({
+                    'email': user_email,
+                    'learning_level': predicted_learning_level,
+                    'correct_ratio': correct_ratio,
+                    'total_marks': total_marks,
+                    'highest_incorrect_type': highest_incorrect_type,
+                    'time_taken': time_taken,
+                    'course_name': course_name,
+                    'quiz_name': quiz_name,
+                    'submission_date': datetime.now().strftime('%Y-%m-%d'),
+                    'quiz_badges': quiz_badges,
+                    'add_extra_time clicks': add_extra_time_clicks,
+                    'use_hint_clicks': use_hint_clicks,
+                    'show_answer_clicks': show_answer_clicks
+                })
             learning_collection.update_one(
                 {'email': user_email},
                 {'$set': {'learning_level':predicted_learning_level}}
             )
-            students_collection.insert_one({
-                'email': user_email,
-                'learning_level': predicted_learning_level,
-                'correct_ratio': correct_ratio,
-                'total_marks': total_marks,
-                'highest_incorrect_type': highest_incorrect_type,
-                'time_taken': time_taken,
-                'course_name': course_name,
-                'quiz_name': quiz_name,
-                'submission_date': datetime.now().strftime('%Y-%m-%d'),
-                'quiz_badges':quiz_badges
-
-            })
-            leaderboard_collection.insert_one({
-                'email': user_email,
-                'learning_level': predicted_learning_level,
-                'total_marks': total_marks,
-                'course_name': course_name,
-                'quiz_name': quiz_name,
-                'submission_date': datetime.now().strftime('%Y-%m-%d')
-
-            })
             if recommendation_result == 'based on above we recommend you horror theme to nourish and to grow':
                 return redirect(url_for('quiz_result_horror', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio))
             elif recommendation_result == 'based on above we recommend you nature content theme to nourish and to grow':
@@ -968,20 +1173,312 @@ def start_quiz(course_name, quiz_name):
             else:
                 return redirect(url_for('quiz_result_fantasy', course_name=course_name, quiz_name=quiz_name, total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio)) 
     if quiz_start_time is None:
-        quiz_start_time = datetime.now()
-    return render_template(template_name, course_name=course_name, quiz_name=quiz_name, questions=questions, timer=timer, user_answers=user_answers, total_coins=total_coins, total_keys=total_keys, total_heart=total_heart)
+        quiz_start_time = datetime.now() 
+    return render_template(template_name, course_name=course_name, quiz_name=quiz_name, questions=questions, timer=timer, user_answers=user_answers, total_coins=total_coins, total_keys=total_keys, total_heart=total_heart,correct_answer=correct_answer,hint=hint)
+
+def get_assignments(user_email, course_name, quiz_name):
+    # Fetch assignments data dynamically from the database
+    student_data = db.students.find_one(
+        {
+            'email': user_email,
+            'course_name': course_name,
+            'quiz_name': quiz_name
+        }
+    )
+
+    # Check if student_data is not None and 'assignments' key is present
+    if student_data and 'assignments' in student_data:
+        # Prepare assignments dictionary from the 'assignments' field
+        assignments_data = student_data['assignments']
+        assignments = {assignment: {'completed': assignments_data[assignment].get('completed', False)} for assignment in assignments_data}
+    else:
+        assignments = {}
+        
+    print("Assignments Data:", list(assignments_data))    
+
+    return assignments
+
+
+def get_comparison_message(latest_submission, second_latest_submission):
+    # Extracting click counts from the latest submission
+    latest_add_extra_time_clicks = latest_submission.get('add_extra_time clicks', 0)
+    latest_use_hint_clicks = latest_submission.get('use_hint_clicks', 0)
+    latest_show_answer_clicks = latest_submission.get('show_answer_clicks', 0)
+
+    # Extracting click counts from the second latest submission
+    second_latest_add_extra_time_clicks = second_latest_submission.get('add_extra_time clicks', 0)
+    second_latest_use_hint_clicks = second_latest_submission.get('use_hint_clicks', 0)
+    second_latest_show_answer_clicks = second_latest_submission.get('show_answer_clicks', 0)
+
+    # Compare the counts
+    if (
+        latest_add_extra_time_clicks > second_latest_add_extra_time_clicks or
+        latest_use_hint_clicks > second_latest_use_hint_clicks or
+        latest_show_answer_clicks > second_latest_show_answer_clicks
+    ):
+        return "Why are you using these options too much? Think, in the last tests, you used them very less."
+    else:
+        return "You are improving!"
 
 @app.route('/quiz_result_horror/<course_name>/<quiz_name>/<total_marks>/<correct_ratio>/<incorrect_ratio>', methods=['GET'])
 def quiz_result_horror(course_name, quiz_name, total_marks, correct_ratio, incorrect_ratio):
-    return render_template('quiz_result_horror.html', course_name=course_name, quiz_name=quiz_name, result='horror', total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio)
+    user_email = session.get('email') or session.get('student_email')
+    students_collection = db['students']
+    quiz_collection = db['quiz']
+
+    # Fetch details of the student's last two submissions for any quiz
+    past_submissions = students_collection.find(
+        {
+            'email': user_email
+        }
+    ).sort('_id', -1).limit(2)
+    # Convert the cursor to a list
+    past_submissions_list = list(past_submissions)
+
+    # Fetching quiz information from the quiz collection
+    quiz_info = quiz_collection.find_one({'course_name': course_name, 'quiz_name': quiz_name})
+    quiz_badge_names = quiz_info.get('badges', []) if quiz_info and 'badges' in quiz_info else []
+
+    # Mapping of badge names to URLs based on stored data
+    badge_data = {
+        'pro': 'https://images.squarespace-cdn.com/content/v1/5ce4e383c91a190001537163/1653365043041-9SBNP4GHPLA1JXFSBKT7/Owl+5054+v6+Green+-+Black+-+600x600.gif',
+        'intermediate': 'https://i.pinimg.com/originals/83/0e/f7/830ef72582287cfb5c7fbe61a24dbc36.gif',
+        'beginner': 'https://cdn.dribbble.com/users/3278261/screenshots/6747984/ezgif.com-video-to-gif__11_.gif',
+        # Add more mappings as needed
+    }
+
+    # Assuming quiz_badge_names is defined somewhere
+    quiz_badge_names = [quiz_badge_names]
+
+    # Convert badge names to URLs based on stored data
+    quiz_badges = [{'name': badge_name, 'url': badge_data.get(badge_name, '')} for badge_name in quiz_badge_names]
+
+    # Check if there are two past submissions
+    if len(past_submissions_list) == 2:
+        # Extract details of the latest and second latest submissions
+        latest_submission = past_submissions_list[0]
+        second_latest_submission = past_submissions_list[1]
+
+        # Extracting click counts from the latest submission
+        latest_add_extra_time_clicks = latest_submission.get('add_extra_time clicks', 0)
+        latest_use_hint_clicks = latest_submission.get('use_hint_clicks', 0)
+        latest_show_answer_clicks = latest_submission.get('show_answer_clicks', 0)
+
+        # Extracting click counts from the second latest submission
+        second_latest_add_extra_time_clicks = second_latest_submission.get('add_extra_time clicks', 0)
+        second_latest_use_hint_clicks = second_latest_submission.get('use_hint_clicks', 0)
+        second_latest_show_answer_clicks = second_latest_submission.get('show_answer_clicks', 0)
+
+        # Compare the counts
+        if (
+            latest_add_extra_time_clicks > second_latest_add_extra_time_clicks or
+            latest_use_hint_clicks > second_latest_use_hint_clicks or
+            latest_show_answer_clicks > second_latest_show_answer_clicks
+        ):
+            message = "Why are you using these options too much? Think, in the last tests, you used them very less."
+        else:
+            message = "You are improving!"
+
+        return render_template(
+            'quiz_result_horror.html',
+            course_name=course_name,
+            quiz_name=quiz_name,
+            result='horror',
+            total_marks=total_marks,
+            correct_ratio=correct_ratio,
+            incorrect_ratio=incorrect_ratio,
+            message=message,
+            quiz_badges=quiz_badges
+        )
+
+    else:
+        # Handle the case where there are not enough past submissions
+        message = "Insufficient data for comparison."
+        return render_template(
+            'quiz_result_horror.html',
+            course_name=course_name,
+            quiz_name=quiz_name,
+            result='nature',
+            total_marks=total_marks,
+            correct_ratio=correct_ratio,
+            incorrect_ratio=incorrect_ratio,
+            message=message,
+            quiz_badges=quiz_badges
+        )
 
 @app.route('/quiz_result_nature/<course_name>/<quiz_name>/<total_marks>/<correct_ratio>/<incorrect_ratio>', methods=['GET'])
 def quiz_result_nature(course_name, quiz_name, total_marks, correct_ratio, incorrect_ratio):
-    return render_template('quiz_result_nature.html', course_name=course_name, quiz_name=quiz_name, result='nature', total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio)
+    user_email = session.get('email') or session.get('student_email')
+    students_collection = db['students']
+    quiz_collection = db['quiz']
+
+    # Fetch details of the student's last two submissions for any quiz
+    past_submissions = students_collection.find(
+        {
+            'email': user_email
+        }
+    ).sort('_id', -1).limit(2)
+    # Convert the cursor to a list
+    past_submissions_list = list(past_submissions)
+
+    # Fetching quiz information from the quiz collection
+    quiz_info = quiz_collection.find_one({'course_name': course_name, 'quiz_name': quiz_name})
+    quiz_badge_names = quiz_info.get('badges', []) if quiz_info and 'badges' in quiz_info else []
+
+    # Mapping of badge names to URLs based on stored data
+    badge_data = {
+        'pro': 'https://images.squarespace-cdn.com/content/v1/5ce4e383c91a190001537163/1653365043041-9SBNP4GHPLA1JXFSBKT7/Owl+5054+v6+Green+-+Black+-+600x600.gif',
+        'intermediate': 'https://i.pinimg.com/originals/83/0e/f7/830ef72582287cfb5c7fbe61a24dbc36.gif',
+        'beginner': 'https://cdn.dribbble.com/users/3278261/screenshots/6747984/ezgif.com-video-to-gif__11_.gif',
+        # Add more mappings as needed
+    }
+
+    # Assuming quiz_badge_names is defined somewhere
+    quiz_badge_names = [quiz_badge_names]
+
+    # Convert badge names to URLs based on stored data
+    quiz_badges = [{'name': badge_name, 'url': badge_data.get(badge_name, '')} for badge_name in quiz_badge_names]
+
+    # Check if there are two past submissions
+    if len(past_submissions_list) == 2:
+        # Extract details of the latest and second latest submissions
+        latest_submission = past_submissions_list[0]
+        second_latest_submission = past_submissions_list[1]
+
+        # Extracting click counts from the latest submission
+        latest_add_extra_time_clicks = latest_submission.get('add_extra_time clicks', 0)
+        latest_use_hint_clicks = latest_submission.get('use_hint_clicks', 0)
+        latest_show_answer_clicks = latest_submission.get('show_answer_clicks', 0)
+
+        # Extracting click counts from the second latest submission
+        second_latest_add_extra_time_clicks = second_latest_submission.get('add_extra_time clicks', 0)
+        second_latest_use_hint_clicks = second_latest_submission.get('use_hint_clicks', 0)
+        second_latest_show_answer_clicks = second_latest_submission.get('show_answer_clicks', 0)
+
+        # Compare the counts
+        if (
+            latest_add_extra_time_clicks > second_latest_add_extra_time_clicks or
+            latest_use_hint_clicks > second_latest_use_hint_clicks or
+            latest_show_answer_clicks > second_latest_show_answer_clicks
+        ):
+            message = "Why are you using these options too much? Think, in the last tests, you used them very less."
+        else:
+            message = "You are improving!"
+
+        return render_template(
+            'quiz_result_nature.html',
+            course_name=course_name,
+            quiz_name=quiz_name,
+            result='nature',
+            total_marks=total_marks,
+            correct_ratio=correct_ratio,
+            incorrect_ratio=incorrect_ratio,
+            message=message,
+            quiz_badges=quiz_badges
+        )
+
+    else:
+        # Handle the case where there are not enough past submissions
+        message = "Insufficient data for comparison."
+        return render_template(
+            'quiz_result_nature.html',
+            course_name=course_name,
+            quiz_name=quiz_name,
+            result='nature',
+            total_marks=total_marks,
+            correct_ratio=correct_ratio,
+            incorrect_ratio=incorrect_ratio,
+            message=message,
+            quiz_badges=quiz_badges
+        )
+
 
 @app.route('/quiz_result_fantasy/<course_name>/<quiz_name>/<total_marks>/<correct_ratio>/<incorrect_ratio>', methods=['GET'])
 def quiz_result_fantasy(course_name, quiz_name, total_marks, correct_ratio, incorrect_ratio):
-    return render_template('quiz_result_fantasy.html', course_name=course_name, quiz_name=quiz_name, result='fantasy', total_marks=total_marks, correct_ratio=correct_ratio, incorrect_ratio=incorrect_ratio)
+    user_email = session.get('email') or session.get('student_email')
+    students_collection = db['students']
+    quiz_collection = db['quiz']
+
+    # Fetch details of the student's last two submissions for any quiz
+    past_submissions = students_collection.find(
+        {
+            'email': user_email
+        }
+    ).sort('_id', -1).limit(2)
+    # Convert the cursor to a list
+    past_submissions_list = list(past_submissions)
+
+    # Fetching quiz information from the quiz collection
+    quiz_info = quiz_collection.find_one({'course_name': course_name, 'quiz_name': quiz_name})
+    quiz_badge_names = quiz_info.get('badges', []) if quiz_info and 'badges' in quiz_info else []
+
+    # Mapping of badge names to URLs based on stored data
+    badge_data = {
+        'pro': 'https://images.squarespace-cdn.com/content/v1/5ce4e383c91a190001537163/1653365043041-9SBNP4GHPLA1JXFSBKT7/Owl+5054+v6+Green+-+Black+-+600x600.gif',
+        'intermediate': 'https://i.pinimg.com/originals/83/0e/f7/830ef72582287cfb5c7fbe61a24dbc36.gif',
+        'beginner': 'https://cdn.dribbble.com/users/3278261/screenshots/6747984/ezgif.com-video-to-gif__11_.gif',
+        # Add more mappings as needed
+    }
+
+    # Assuming quiz_badge_names is defined somewhere
+    quiz_badge_names = [quiz_badge_names]
+
+    # Convert badge names to URLs based on stored data
+    quiz_badges = [{'name': badge_name, 'url': badge_data.get(badge_name, '')} for badge_name in quiz_badge_names]
+
+    # Check if there are two past submissions
+    if len(past_submissions_list) == 2:
+        # Extract details of the latest and second latest submissions
+        latest_submission = past_submissions_list[0]
+        second_latest_submission = past_submissions_list[1]
+
+        # Extracting click counts from the latest submission
+        latest_add_extra_time_clicks = latest_submission.get('add_extra_time clicks', 0)
+        latest_use_hint_clicks = latest_submission.get('use_hint_clicks', 0)
+        latest_show_answer_clicks = latest_submission.get('show_answer_clicks', 0)
+
+        # Extracting click counts from the second latest submission
+        second_latest_add_extra_time_clicks = second_latest_submission.get('add_extra_time clicks', 0)
+        second_latest_use_hint_clicks = second_latest_submission.get('use_hint_clicks', 0)
+        second_latest_show_answer_clicks = second_latest_submission.get('show_answer_clicks', 0)
+
+        # Compare the counts
+        if (
+            latest_add_extra_time_clicks > second_latest_add_extra_time_clicks or
+            latest_use_hint_clicks > second_latest_use_hint_clicks or
+            latest_show_answer_clicks > second_latest_show_answer_clicks
+        ):
+            message = "Why are you using these options too much? Think, in the last tests, you used them very less."
+        else:
+            message = "You are improving!"
+
+        return render_template(
+            'quiz_result_fantasy.html',
+            course_name=course_name,
+            quiz_name=quiz_name,
+            result='fantasy',
+            total_marks=total_marks,
+            correct_ratio=correct_ratio,
+            incorrect_ratio=incorrect_ratio,
+            message=message,
+            quiz_badges=quiz_badges
+        )
+
+    else:
+        # Handle the case where there are not enough past submissions
+        message = "Insufficient data for comparison."
+        return render_template(
+            'quiz_result_fantasy.html',
+            course_name=course_name,
+            quiz_name=quiz_name,
+            result='fantasy',
+            total_marks=total_marks,
+            correct_ratio=correct_ratio,
+            incorrect_ratio=incorrect_ratio,
+            message=message,
+            quiz_badges=quiz_badges
+        )
+
 
 @app.route('/assignment_list/<course_name>/<quiz_name>', methods=['GET'])
 def assignment_list(course_name, quiz_name):
@@ -1023,61 +1520,134 @@ def fill_assignment(course_name, quiz_name, assignment_name):
         user_email = session['student_email']
     else:
         return redirect('/role')
-    recommendation_result = get_user_recommendation_result(user_email)  # Replace with your actual logic to get recommendation result
+
+    recommendation_result = get_user_recommendation_result(user_email)
+
     assignment_collection = db['assignment']
     assignment = assignment_collection.find_one({
         'course_name': course_name,
         'quiz_name': quiz_name,
         'assignment_name': assignment_name
     })
+
     if assignment:
-        second_time = students_collection.find_one({'email': user_email})
-        learning_level = second_time['learning_level'] if second_time else None
+        # Fetch learning level from the learning collection
+        learning_level_document = learning_collection.find_one({'email': user_email}, {'learning_level': 1, '_id': 0})
+        learning_level = learning_level_document.get('learning_level') if learning_level_document else None
+
         questions = assignment.get('questions', [])
         filtered_questions = []
+
+        # Filter questions based on learning level
         for question in questions:
-            if learning_level == 'quick learner' and question['difficulty_level'] == 'hard':
+            if (
+                (learning_level == 'quick learner' and question['difficulty_level'] == 'hard') or
+                (learning_level == 'average learner' and question['difficulty_level'] == 'medium') or
+                (learning_level == 'slow learner' and question['difficulty_level'] == 'easy')
+            ):
                 filtered_questions.append(question)
-            elif learning_level == 'average learner' and question['difficulty_level'] == 'medium':
-                filtered_questions.append(question)
-            elif learning_level == 'slow learner' and question['difficulty_level'] == 'easy':
-                filtered_questions.append(question)
+
         if recommendation_result == 'based on above we recommend you horror theme to nourish and to grow':
-            return render_template('fill_assignment_horror.html', course_name=course_name, quiz_name=quiz_name, assignment_name=assignment_name, questions=filtered_questions)
+            # Check if there are questions for the specified learning level
+            if filtered_questions:
+                # Randomly select one question
+                selected_questions = random.sample(filtered_questions, k=1)  # You can adjust 'k' based on your preference
+                return render_template('fill_assignment_horror.html', course_name=course_name, quiz_name=quiz_name, assignment_name=assignment_name, questions=selected_questions)
+            else:
+                return render_template('error.html', message='No questions found for the specified learning level.')
         elif recommendation_result == 'based on above we recommend you nature content theme to nourish and to grow':
-            return render_template('fill_assignment_nature.html', course_name=course_name, quiz_name=quiz_name, assignment_name=assignment_name, questions=filtered_questions)
+            if filtered_questions:
+                # Randomly select one question
+                selected_questions = random.sample(filtered_questions, k=1)  # You can adjust 'k' based on your preference
+                return render_template('fill_assignment_nature.html', course_name=course_name, quiz_name=quiz_name, assignment_name=assignment_name, questions=selected_questions)
+            else:
+                return render_template('error.html', message='No questions found for the specified learning level.')
         elif recommendation_result == 'based on above we recommend you fantasy theme to nourish and to grow':
-            return render_template('fill_assignment_fantasy.html', course_name=course_name, quiz_name=quiz_name, assignment_name=assignment_name, questions=filtered_questions)
+            if filtered_questions:
+                # Randomly select one question
+                selected_questions = random.sample(filtered_questions, k=1)  # You can adjust 'k' based on your preference
+                return render_template('fill_assignment_fantasy.html', course_name=course_name, quiz_name=quiz_name, assignment_name=assignment_name, questions=selected_questions)
+            else:
+                return render_template('error.html', message='No questions found for the specified learning level.')
+        else:
+            return render_template('error.html', message='Invalid recommendation result.')
     else:
         return render_template('assignment_not_found.html')
-
+    
 @app.route('/completed_assignment/<course_name>/<quiz_name>/<assignment_name>', methods=['POST'])
-def completed_assignment(course_name, quiz_name,assignment_name):
+def completed_assignment(course_name, quiz_name, assignment_name):
     user_email = session.get('email') or session.get('student_email')
-    assignment_collection = db['assignment']
-    assignment = assignment_collection.find_one({'course_name': course_name, 'quiz_name': quiz_name})
-    if assignment:
-        questions = assignment.get('questions', [])
-        for question in questions:
-            answer_key = f'answer_{questions.index(question) + 1}'
-            user_answer = request.form.get(answer_key)
-            students_assignment.insert_one({
-                'user_email': user_email,
+    students_collection = db['students']
+
+    # Fetch the total marks of the user based on the quiz_name
+    user_data = students_collection.find_one({
+        'email': user_email,
+        'course_name': course_name,
+        'quiz_name': quiz_name
+    })
+
+    if user_data:
+        total_marks = user_data.get('total_marks', 0)  # Assuming a default of 0 if not found
+    else:
+        total_marks = 0  # Set a default value if no user_data is found
+
+    # Get the questions and user answers from the request form
+    questions_and_answers = {}
+    for key, value in request.form.items():
+        if key.startswith('user_answer_'):
+            question_id = key.replace('user_answer_', '')
+            question = request.form.get(f'question_{question_id}')
+            user_answer = value
+            questions_and_answers[question_id] = {
+                'question': question,
+                'user_answer': user_answer
+            }
+    print("question",question)
+    print('answer',user_answer)
+    # Insert each question and user answer separately
+    for question_id, data in questions_and_answers.items():
+        students_collection.update_one(
+            {
+                'email': user_email,
                 'course_name': course_name,
                 'quiz_name': quiz_name,
-                'question': question['question'],
-                'user_answer': user_answer,
-                'assignment_name':assignment_name
-            })
-            student_test_collection.insert_one({
-                'user_email': user_email,
-                'course_name': course_name,
-                'quiz_name': quiz_name,
-                'email':user_email,
-                'assignment_name':assignment_name
-                
-            })
-        return redirect(url_for('role'))
+            },
+            {
+                '$addToSet': {
+                    f'assignments.{assignment_name}.questions_and_answers': {
+                        'question': data['question'],
+                        'user_answer': data['user_answer']
+                    }
+                }
+            }
+        )
+
+    # Update information about the completed assignment in the students_collection
+    students_collection.update_one(
+        {
+            'email': user_email,
+            'course_name': course_name,
+            'quiz_name': quiz_name,
+        },
+        {
+            '$set': {
+                f'assignments.{assignment_name}': {
+                    'completed': True,
+                    'total_marks': total_marks,
+                    'question':question,
+                    'user_answer':user_answer
+                }
+            }
+        }
+    )
+
+    return redirect(url_for('completed_assignment_page', course_name=course_name, quiz_name=quiz_name, assignment_name=assignment_name))
+
+@app.route('/completed_assignment_page/<course_name>/<quiz_name>/<assignment_name>')
+def completed_assignment_page(course_name, quiz_name, assignment_name):
+    # You can pass any additional data to the template if needed
+    return render_template('completed_assignment.html', course_name=course_name, quiz_name=quiz_name, assignment_name=assignment_name)
+
 
 @app.route('/see_assignments/<course_name>', methods=['GET'])
 def see_assignments(course_name):
@@ -1217,11 +1787,11 @@ def view_materials(course_name, quiz_name):
 def retry_horror(course_name, quiz_name):
     return render_template('retry_horror.html', course_name=course_name, quiz_name=quiz_name)
 
-@app.route('/retry_horror/<course_name>/<quiz_name>')
+@app.route('/retry_nature/<course_name>/<quiz_name>')
 def retry_nature(course_name, quiz_name):
     return render_template('retry_nature.html', course_name=course_name, quiz_name=quiz_name)
 
-@app.route('/retry_horror/<course_name>/<quiz_name>')
+@app.route('/retry_nature/<course_name>/<quiz_name>')
 def retry_fantasy(course_name, quiz_name):
     return render_template('retry_fantasy.html',course_name=course_name, quiz_name=quiz_name)        
 
@@ -1302,34 +1872,129 @@ def teacherdashboard():
                     return render_template('teacherdashboard.html', teacher_data=template_context)
     return redirect(url_for('teacher_login'))
 
-@app.route("/leaderboard", methods=["GET", "POST"])
-def leaderboard():
-    unique_courses, unique_quiz_names, unique_assignments = get_unique_options()
-    if request.method == "POST":
-        course_name = request.form.get("course_name")
-        quiz_name = request.form.get("quiz_name")
-        assignment_name = request.form.get("assignment_name")
-        print(f"course_name: {course_name}, quiz_name: {quiz_name}, assignment_name: {assignment_name}")
-        data = list(
-            collection.find(
-                {
-                    "course_name": course_name,
-                    "quiz_name": quiz_name,
-                    "assignment": assignment_name,
-                }
-            )
-        )
-        print("Fetched data:", data)
-        return render_template("leaderboard.html",data=data,unique_courses=unique_courses,unique_quiz_names=unique_quiz_names,unique_assignments=unique_assignments)
-    return render_template("leaderboard.html", unique_courses=unique_courses, unique_quiz_names=unique_quiz_names, unique_assignments=unique_assignments)
 
-@app.route("/save_mark", methods=["POST"])
-def save_mark():
+collection2 = db.assignment
+collection3 = db.students
+collection4 = db.slow
+collection5 = db.average
+collection6 = db.quick
+def get_unique_options(course_name):
+    # Get unique quiz names and assignment names from the database
+    unique_quiz_names = collection2.distinct('quiz_name', {'course_name': course_name})
+    unique_assignments = collection2.distinct('assignment_name', {'course_name': course_name})
+    return unique_quiz_names, unique_assignments
+
+@app.route('/submission_details', methods=['GET', 'POST'])
+def submission_details():
+    unique_course_names = collection2.distinct('course_name')  # Replace with actual course names
+
+    if request.method == 'POST':
+        course_name = request.form.get('course_name')
+        quiz_name = request.form.get('quiz_name')
+        assignment_name = request.form.get('assignment_name')
+
+        # Query the database based on the selected quiz_name and assignment_name
+        try:
+            data = collection3.find({"quiz_name": quiz_name, "course_name": course_name})
+        except Exception as e:
+            # Handle the exception, log it, or return an error page
+            return render_template('error.html', error=str(e))
+
+        unique_quiz_names, unique_assignments = get_unique_options(course_name)
+
+        return render_template('submission_details.html', data=data, unique_quiz_names=unique_quiz_names,
+                               unique_assignments=unique_assignments, selected_course=course_name,
+                               unique_course_names=unique_course_names, assignment_name=assignment_name)
+
+    # On initial load, provide default values or handle as needed
+    return render_template('submission_details.html', unique_quiz_names=[], unique_assignments=[],
+                           selected_course=None, unique_course_names=unique_course_names, assignment_name=None)
+    
+@app.route('/save_values', methods=['POST'])
+def save_values():
     data = request.json
-    user_email = data["userEmail"]
-    mark = data["mark"]
-    collection.update_one({"user_email": user_email}, {"$set": {"assessment_mark": mark}}, upsert=True)
-    return jsonify({"status": "success"})
+    print('data',data)
+    user_email = data['userEmail']
+    assessment_mark = data['assessmentMark']
+    task1 = data['task1']
+    attendance = data['attendance']
+    preparation = data['preparation']
+    ontime = data['ontime']
+    quiz = data['total_marks']
+    quiz_name1 = data['quiz_name']
+    course_name= data['course_name']
+    
+    print(data)
+    ttpoint = assessment_mark + task1 + attendance + preparation + ontime + int(quiz)
+    ttpoint = ttpoint * 5
+    print('ttpoint',ttpoint)
+    user_data = student_collection.find_one({'email': user_email})
+    total_coins = user_data.get('total_coins', 0)
+    
+
+    # Update the document with the provided values
+    if data['ll'] == "slow learner":
+        collection4.insert_one({
+            'user_email': user_email,
+            'assessment_mark': assessment_mark,
+            'task1': task1,
+            'attendance': attendance,
+            'preparation': preparation,
+            'ontime': ontime,
+            'total_point': ttpoint,
+            'quiz_name': quiz_name1,                    
+            'course_name': course_name
+
+        })
+        student_collection.update_one(
+            {'email': user_email},
+            {'$set': {'total_coins': total_coins + ttpoint}},
+            upsert=True
+        )
+        print("slow learner is coming")
+
+    if data['ll'] == "average learner":
+        collection5.insert_one({ 
+            'user_email': user_email,
+            'assessment_mark': assessment_mark,
+            'task1': task1,
+            'attendance': attendance,
+            'preparation': preparation,
+            'ontime': ontime,
+            'total_point': ttpoint,
+            'quiz_name': quiz_name1,
+            'course_name': course_name
+
+        })
+        student_collection.update_one(
+            {'email': user_email},
+            {'$set': {'total_coins': total_coins + ttpoint}},
+            upsert=True
+        )
+        print("average learner has arrived bro")
+    
+    if data['ll'] == "quick learner":
+        collection6.insert_one({
+            'user_email': user_email,
+            'assessment_mark': assessment_mark,
+            'task1': task1,
+            'attendance': attendance,
+            'preparation': preparation,
+            'ontime': ontime,
+            'total_point': ttpoint,
+            'quiz_name': quiz_name1,
+            'course_name': course_name
+
+        })
+        student_collection.update_one(
+            {'email': user_email},
+            {'$set': {'total_coins': total_coins + ttpoint}},
+            upsert=True
+        )
+        print("quick learner is introduced")
+
+    return jsonify({'status': 'success'})
+
 
 @app.route('/mycourses')
 def my_courses():
@@ -1616,7 +2281,7 @@ def give_quiz(course_name):
     if request.method == 'POST':
         print("Form submitted successfully")
         quiz_name = request.form['quizName']
-        course_name = request.form['coursename']
+        course_name = request.form['courseName']
         quiz_data = {
             "course_name": course_name,
             "quiz_name": quiz_name,
@@ -1643,7 +2308,8 @@ def give_quiz(course_name):
         else:
             print("Failed to insert the quiz")
         return redirect(url_for('completed'))
-    return render_template('give_quiz.html')
+    return render_template('give_quiz.html', course_name=course_name)
+
 
 @app.route('/completed')
 def completed():
@@ -1654,7 +2320,11 @@ def give_assignment(course_name):
     if request.method == "POST":
         assignment_name = request.form["assignmentName"]
         quiz_name = request.form["quizName"]
+        
+        # Initialize an empty list to store questions
         questions = []
+
+        # Iterate over form keys to extract questions
         question_keys = [key for key in request.form.keys() if key.startswith("question_")]
         for key in question_keys:
             question_index = key.split("_")[-1]
@@ -1663,39 +2333,52 @@ def give_assignment(course_name):
                 "difficulty": request.form[f"difficulty_{question_index}"],
             }
             questions.append(question)
-            assignment_data = {
-                "course_name": course_name,
-                "assignment_name": assignment_name,
-                "quiz_name": quiz_name,
-                "questions": questions,
-            }
-            result = assignment_collection.insert_one(assignment_data)
+
+        # Create the assignment_data dictionary
+        assignment_data = {
+            "course_name": course_name,
+            "assignment_name": assignment_name,
+            "quiz_name": quiz_name,
+            "questions": questions,
+        }
+
+        # Insert the assignment_data into the database
+        result = assignment_collection.insert_one(assignment_data)
+
         if result.inserted_id:
             return redirect(url_for("completed"))
         else:
-            return render_template("error.html") 
+            return render_template("error.html")
+
     quizzes = quiz_collection.distinct("quiz_name", {"course_name": course_name})
     return render_template("give_assignment.html", course_name=course_name, quizzes=quizzes)
+
 
 @app.route("/give_material/<course_name>", methods=["GET", "POST"])
 def give_material(course_name):
     if request.method == "POST":
-        material_link = request.form["materialLink"]
         quiz_name = request.form["quizName"]
-        difficulty_level = request.form["difficulty_1"]
+        slow_learner_material = request.form.get("slowLearnerMaterial")
+        topper_material = request.form.get("topperMaterial")
+        average_learner_material = request.form.get("averageLearnerMaterial")
         material_data = {
-            "course_name": course_name,
-            "material_link": material_link,
-            "quiz_name": quiz_name,
-            "difficulty_level": difficulty_level,
-        }
+                "course_name": course_name,
+                "quiz_name": quiz_name,
+                "slow_learner_material": slow_learner_material,
+                "topper_material": topper_material,
+                "average_learner_material": average_learner_material,
+            }
         result = material_collection.insert_one(material_data)
         if result.inserted_id:
-            return redirect(url_for("completed"))
+            print("Material inserted successfully!")
+            return redirect(url_for("completed"))  # Check if "completed" is the correct route
         else:
+            print("Error inserting material!")
             return render_template("error.html") 
+
     quizzes = quiz_collection.distinct("quiz_name", {"course_name": course_name})
     return render_template("give_material.html", course_name=course_name, quizzes=quizzes)
+
 
 @app.route("/tlogout")
 def tlogout():

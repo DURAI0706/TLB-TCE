@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ course_name }} - Nature Quizzes</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#1b1b1b">
+    <title>{{ course_name }} - Quizzes</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,7 +22,12 @@
             padding: 0;
             background-repeat: no-repeat;
             background-size: cover;
+            background-attachment: fixed; /* Added */
+            background-position: center; /* Added */
             background-image: url('https://i.pinimg.com/originals/6c/15/7a/6c157a668c99422c8b81348cc447ba89.gif');
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
         .container {
@@ -67,7 +76,7 @@
             box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
             padding: 2rem;
             position: relative;
-            width: 600px; /* Set width for two boxes in a row */
+            width: 100%; /* Set width to 100% for full-width on all devices */
         }
 
         .edit-button {
@@ -81,13 +90,34 @@
             margin-bottom: 10px; /* Added for spacing */
         }
 
+        @media only screen and (min-width: 100px) {
+            /* Adjust styles for screens with a minimum width of 600px (e.g., tablets and larger) */
+            .course-container {
+                width: 100px; /* Adjust width for larger screens */
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Retry Page</h1>
-    <h2>Sorry, you have failed. Please read the materials based on the Horror theme to improve.</h2>
-    <div class="course-container">
-        <a class="edit-button" href="{{ url_for('view_materials', course_name=course_name, quiz_name=quiz_name) }}">Go to Materials</a>
-    </div>
-</body>
-</html>
+    <body>
+        <h1>Retry Page</h1>
+        <div class="course-container">
+            <a class="edit-button" href="{{ url_for('view_materials', course_name=course_name, quiz_name=quiz_name) }}">Go to Materials</a>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+        <script>
+                window.onload = function () {
+                showInstructions();
+            };
+            function showInstructions() {
+                Swal.fire({
+                    title: 'Instructions',
+                    html: 'Sorry, you have failed. Please read the materials based on the {{ course_name }} to improve.',
+                    icon: 'info',
+                    confirmButtonText: 'Got it!'
+                });
+            }
+        </script>
+    </body>
+    </html>
+    

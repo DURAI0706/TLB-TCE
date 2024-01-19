@@ -1,28 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#1b1b1b">
     <title>Registration Page</title>
     <style>
         body {
             background-color: #1b1b1b;
             font-family: Arial, sans-serif;
-            background-image: url('https://media1.giphy.com/media/BHNfhgU63qrks/giphy.gif');
-            background-size: cover;
+            background: url('https://media1.giphy.com/media/BHNfhgU63qrks/giphy.gif') no-repeat center center fixed;
+            background-size: cover; /* Ensure the background covers the entire page */
             background-position: center;
             background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
+
         .container {
             background-color: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-            margin: 100px auto;
-            padding: 50px;
-            position: relative;
-            width: 400px;
+            padding: 30px;
+            width: 80%;
+            max-width: 400px;
+            box-sizing: border-box;
         }
+
         h1 {
             color: #1b1b1b;
             font-size: 30px;
@@ -31,6 +43,7 @@
             text-align: center;
             text-transform: uppercase;
         }
+
         input[type="text"],
         input[type="password"],
         select,
@@ -46,7 +59,9 @@
             padding: 15px;
             width: 100%;
             transition: box-shadow 0.3s ease-in-out;
+            box-sizing: border-box;
         }
+
         input[type="text"]:focus,
         input[type="password"]:focus,
         select:focus,
@@ -54,6 +69,7 @@
             box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.2);
             outline: none;
         }
+
         input[type="submit"] {
             background-color: #1b1b1b;
             border: none;
@@ -66,54 +82,63 @@
             text-transform: uppercase;
             width: 100%;
             transition: background-color 0.3s ease-in-out;
+            box-sizing: border-box;
         }
+
         input[type="submit"]:hover {
             background-color: #333;
         }
+
         .signup {
             color: #1b1b1b;
             font-size: 14px;
             margin-top: 20px;
             text-align: center;
         }
+
         .signup a {
             color: #1b1b1b;
             text-decoration: none;
             transition: color 0.3s ease-in-out;
         }
+
         .signup a:hover {
             text-decoration: underline;
             color: #ff4500;
         }
+
         .animation {
             background-color: #ff4500;
             border-radius: 50%;
             height: 100px;
-            left: -50px;
-            position: absolute;
-            top: -50px;
             width: 100px;
+            margin: -50px auto 0;
             animation: rotate 2s linear infinite, fadeIn 1s ease-out;
             display: none;
         }
+
         @keyframes rotate {
             0% {
                 transform: rotate(0deg);
             }
+
             100% {
                 transform: rotate(360deg);
             }
         }
+
         @keyframes fadeIn {
             0% {
                 opacity: 0;
             }
+
             100% {
                 opacity: 1;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Teacher Registration</h1>
@@ -166,4 +191,5 @@
         });
     </script>
 </body>
+
 </html>

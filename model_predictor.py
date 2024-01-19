@@ -16,11 +16,11 @@ app = Flask(__name__)
 app.secret_key = 'sawq#@21'
 connection_string = "mongodb+srv://hackers:hackers123@psg.kmis61j.mongodb.net/"
 client = MongoClient(connection_string)
-db = client['gamification']
+db = client['python']
 
 def train_model():
     students_collection = db['students']
-    cursor = students_collection.find().limit(263)
+    cursor = students_collection.find().limit(300)
     data = list(cursor)
     df = pd.DataFrame(data)
     types_mapping = {'conceptual': 0, 'application': 1, 'problem solving': 2}
@@ -117,11 +117,9 @@ def predict_learning_level(correct_ratio, highest_incorrect_type, time_taken):
 
 if __name__ == "__main__":
     # Extract command line arguments
-    correct_ratio = 0.8
-    highest_incorrect_type = 'conceptual'
-    time_taken = 150
-
+    correct_ratio = float(sys.argv[1])
+    highest_incorrect_type = sys.argv[2]
+    time_taken = float(sys.argv[3])
     # Predict learning levels
     prediction = predict_learning_level(correct_ratio, highest_incorrect_type, time_taken)
-
-    print("Predicted Learning Level:", prediction)
+    print(prediction)

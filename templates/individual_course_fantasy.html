@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#1b1b1b">
     <title>{{ course.course_name }} - Individual Course</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,9 +22,13 @@
             padding: 0;
             background-repeat: no-repeat;
             background-size: cover;
+            background-attachment: fixed; /* Added */
+            background-position: center; /* Added */
             background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/65e63729-532b-458e-aa16-f693151bda5c/dfshbim-40c694b9-c12a-47f1-8ecd-f2ca8d5cdcb3.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzY1ZTYzNzI5LTUzMmItNDU4ZS1hYTE2LWY2OTMxNTFiZGE1Y1wvZGZzaGJpbS00MGM2OTRiOS1jMTJhLTQ3ZjEtOGVjZC1mMmNhOGQ1Y2RjYjMuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.j40rM3O8QP_7obWRLgZZtaiMUUon1b0WpWB67aIa3tE');
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
-
 
         .container {
             display: flex;
@@ -68,7 +76,7 @@
             box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
             padding: 2rem;
             position: relative;
-            width: 250px; /* Set width for two boxes in a row */
+            width: 100%; /* Set width to 100% for full-width on all devices */
         }
 
         .edit-button {
@@ -82,6 +90,12 @@
             margin-bottom: 10px; /* Added for spacing */
         }
 
+        @media only screen and (min-width: 400px) {
+            /* Adjust styles for screens with a minimum width of 600px (e.g., tablets and larger) */
+            .course-container {
+                width: 200px; /* Adjust width for larger screens */
+            }
+        }
     </style>
 </head>
 <body>

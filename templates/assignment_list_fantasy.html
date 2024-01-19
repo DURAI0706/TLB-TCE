@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ course_name }} - Fantasy Quizzes</title>
+    <title>{{ course_name }} - Nature Quizzes</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -88,8 +88,9 @@
 </head>
 <body>
 
-    <h1>Assignment List - Fantasy Theme</h1>
-    <!-- Display assignment details for horror theme -->
+    <h1>Assignment List</h1>
+
+    <!-- Display assignment details for Nature theme -->
     {% for assignment in assignments %}
         <div class="course-container">
             <h2>{{ assignment.assignment_name }}</h2>

@@ -10,12 +10,9 @@ import joblib
 from flask import jsonify
 from flask import render_template, redirect, session, send_from_directory
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.models import Sequential
+
 from collections import Counter
-from tensorflow.keras.models import Sequential, load_model
+
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from datetime import datetime, timedelta, timezone
@@ -26,7 +23,7 @@ import skfuzzy as fuzz
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LogisticRegression
-from keras.utils import to_categorical
+
 import matplotlib.pyplot as plt 
 from datetime import timedelta
 import subprocess  

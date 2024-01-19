@@ -3,15 +3,11 @@ import random
 from flask import Flask, render_template, request, redirect, flash, session, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from transformers import PreTrainedTokenizerFast, TFBertForSequenceClassification
 import os
 from flask_cors import CORS
 import bcrypt  
 import joblib
-from transformers import AutoTokenizer, TFAutoModel
 from flask import jsonify
-from tensorflow.keras.layers import Embedding, LSTM, Dense, Input
-from tensorflow.keras.models import Model
 from flask import render_template, redirect, session, send_from_directory
 import numpy as np
 import tensorflow as tf

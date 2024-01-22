@@ -608,12 +608,12 @@ def student_courses():
     recommendation_data = recommendation_collection.find_one({'user_id': user_email}) 
     recommendation_result = recommendation_data.get('recommendation') if recommendation_data else None
     if recommendation_result == 'based on above we recommend you horror theme to nourish and to grow':
-        return render_template('mycoursehorror.html', my_courses=my_courses, other_courses=other_courses, joined_course_names=joined_course_names)
+        return render_template('mycoursehorror.html', my_courses=my_courses, other_courses=other_courses)
     elif recommendation_result == 'based on above we recommend you nature content theme to nourish and to grow':
-        return render_template('mycoursenatural.html', my_courses=my_courses, other_courses=other_courses, joined_course_names=joined_course_names)
+        return render_template('mycoursenatural.html', my_courses=my_courses, other_courses=other_courses)
     else:
         try:
-            return render_template('mycoursefantasy.html', my_courses=my_courses, other_courses=other_courses, joined_course_names=joined_course_names)
+            return render_template('mycoursefantasy.html', my_courses=my_courses, other_courses=other_courses)
         except jinja2.exceptions.TemplateNotFound:
             return render_template('default_template.html', student_data = template_context)
     
@@ -2382,7 +2382,7 @@ def tlogout():
 def slogout():
     session.clear()
     return redirect("/studentlogin")
-
+    
 if __name__ == "__main__":
     app.debug = True
     app.run(host='0.0.0.0',port=5001)

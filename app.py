@@ -815,7 +815,7 @@ def start_quiz(course_name, quiz_name):
         highest_incorrect_type = max(incorrect_types, key=incorrect_types.get)
         print('Highest Incorrect Type:', highest_incorrect_type)
         # 4) Correct Ratio
-        correct_ratio = total_marks / (len(questions)*2)
+        correct_ratio = total_marks / (len(questions) * 2)
         print('Correct Ratio:', correct_ratio)
         # 5) Incorrect Ratio
         incorrect_ratio = 1 - correct_ratio

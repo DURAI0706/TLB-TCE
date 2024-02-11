@@ -79,7 +79,7 @@ def train_model():
 
 
 def predict_learning_level(correct_ratio, highest_incorrect_type, time_taken):
-    model_server_url = "http://localhost:8000/predict/"
+    model_server_url = "https://tlb-tce-model-server.onrender.com/predict/"
     request_data = {
         "correct_ratio": correct_ratio,
         "highest_incorrect_type": highest_incorrect_type,

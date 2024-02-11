@@ -7,6 +7,7 @@ import os
 import pandas as pd
 import numpy as np
 import joblib
+import requests
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
@@ -74,46 +75,24 @@ def train_model():
     joblib.dump(clf, 'random_forest_model.joblib')
     joblib.dump(le, 'label_encoder.joblib')
 
+
+
+
 def predict_learning_level(correct_ratio, highest_incorrect_type, time_taken):
-    model_filename = 'random_forest_model.joblib'
-    label_encoder_filename = 'label_encoder.joblib'
+    model_server_url = "http://localhost:8000/predict/"
+    request_data = {
+        "correct_ratio": correct_ratio,
+        "highest_incorrect_type": highest_incorrect_type,
+        "time_taken": time_taken
+    }
 
-    # Check if the model file and label encoder file exist
-    if not os.path.isfile(model_filename) or not os.path.isfile(label_encoder_filename):
-        print(f"Model file {model_filename} or label encoder file {label_encoder_filename} not found. Training the model...")
-        train_model()
+    # Make a POST request to the model server
+    response = requests.post(model_server_url, json=request_data)
 
-    # Load the trained model and label encoder
-    clf = joblib.load(model_filename)
-    le = joblib.load(label_encoder_filename)
+    # Return the prediction received from the model server
+    return response.json()['predicted_learning_level']
 
-    # Create a DataFrame with the new data
-    new_data = pd.DataFrame({
-        'time_taken': [time_taken],
-        'correct_ratio': [correct_ratio],
-        'highest_incorrect_type': [highest_incorrect_type]
-    })
 
-    # Load label encoding mappings
-    types_mapping = {'conceptual': 0, 'application': 1, 'problem solving': 2}
-    # Map 'highest_incorrect_type' to numerical values using the same mapping as before
-    new_data['highest_incorrect_type'] = new_data['highest_incorrect_type'].map(types_mapping)
-
-    # Convert 'Time_taken' to float
-    new_data['time_taken'] = new_data['time_taken'].astype(float)
-
-    # Make predictions on new data
-    predicted_learning_level_encoded = clf.predict(new_data)[0]
-
-    # Decode the predicted label to get the learning level
-    predicted_learning_level = le.inverse_transform([predicted_learning_level_encoded])[0]
-
-    if predicted_learning_level == 0:
-        return 'quick learner'
-    elif predicted_learning_level == 1:
-        return 'average learner'
-    elif predicted_learning_level == 2:
-        return 'slow learner'
 
 if __name__ == "__main__":
     # Extract command line arguments

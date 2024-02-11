@@ -226,7 +226,7 @@
                 <p>Department: {{ course['department'] }}</p>
                 <p>Created By: {{ course['createdBy'] }}</p>
                 <p>Description: {{ course['description'] }}</p>
-                {% if course['name'] in joined_course_names %}
+                {% if course['name'] in my_courses %}
                 <p class="joined-course-message">You have already joined this course.</p>
                 {% else %}
                 <form method="post" action="/verify_join">

@@ -1534,9 +1534,9 @@ def fill_assignment(course_name, quiz_name, assignment_name):
         # Filter questions based on learning level
         for question in questions:
             if (
-                (learning_level == 'quick learner' and question['difficulty_level'] == 'hard') or
-                (learning_level == 'average learner' and question['difficulty_level'] == 'medium') or
-                (learning_level == 'slow learner' and question['difficulty_level'] == 'easy')
+                (learning_level == 'quick learner' and question['difficulty'] == 'hard') or
+                (learning_level == 'average learner' and question['difficulty'] == 'medium') or
+                (learning_level == 'slow learner' and question['difficulty'] == 'easy')
             ):
                 filtered_questions.append(question)
 

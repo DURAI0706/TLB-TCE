@@ -1723,6 +1723,7 @@ def watch_assignment(course_name, quiz_name, assignment_name):
             return render_template('watch_assignment_nature.html', user_answers=user_answers_list, assessment_mark=assessment_mark,question=question)
         elif recommendation_result == 'based on above we recommend you fantasy theme to nourish and to grow':
             return render_template('watch_assignment_fantasy.html', user_answers=user_answers_list, assessment_mark=assessment_mark,question=question)
+      return "You have not completed the quiz please complete it soon."
 
 @app.route('/see_materials/<course_name>', methods=['GET'])
 def see_materials(course_name):

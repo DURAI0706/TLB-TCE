@@ -10,6 +10,7 @@
         ::selection {
             color: green;
         }
+
         ::-moz-selection {
             color: green;
         }
@@ -28,6 +29,7 @@
             transform: scale(0.6);
             transform-origin: top center;
         }
+
         .success {
             font-family: 'Great Vibes', cursive;
             font-size: 43px;
@@ -41,6 +43,7 @@
             overflow: hidden;
             height: 92px;
         }
+
         .submitted {
             font-weight: 100;
             text-transform: uppercase;
@@ -49,12 +52,14 @@
             text-indent: -11px;
             margin: 0 0 20px 0;
         }
+
         .on {
             font-family: 'Great Vibes', cursive;
             font-size: 32px;
             line-height: 0.8;
             margin: 0 0 10px 0;
         }
+
         .date-mon {
             text-transform: uppercase;
             font-weight: 900;
@@ -63,6 +68,7 @@
             line-height: 0.9;
             margin: 0 0 10px 0;
         }
+
         .date-year {
             font-weight: 100;
             text-transform: uppercase;
@@ -71,12 +77,14 @@
             text-indent: -15px;
             margin: 0 0 20px 0;
         }
+
         .time {
             font-family: 'Great Vibes', cursive;
             font-weight: 900;
             font-size: 63px;
             margin: 0 0 50px 0;
         }
+
         .thank-you {
             display: block;
             text-decoration: none;
@@ -90,6 +98,17 @@
             border-radius: 10px;
             font-size: 26px;
             margin-top: 20px;
+        }
+
+        #badge-gif-container {
+            margin-top: 20px;
+        }
+
+        #badge-gif-container img {
+            width: 150px; /* Adjust the width as needed */
+            height: auto; /* Maintain aspect ratio */
+            display: block;
+            margin: 0 auto;
         }
 
         #drawing_canvas {
@@ -116,6 +135,17 @@
         <div class="submitted">
             Submitted
         </div>
+        <div id="badge-gif-container">
+            {% if quiz_badges == 'beginner' %}
+                <img src="https://media0.giphy.com/media/H82F29SqS43dBq4khi/200w.webp?cid=ecf05e47xnphvcveuwzdbi1wu7nfio36j9cluelou8vfejgb&ep=v1_gifs_search&rid=200w.webp&ct=g" alt="Beginner Badge">
+            {% elif quiz_badges == 'intermediate' %}
+                <img src="https://media2.giphy.com/media/DmQqJ8qltqabv75q0f/200w.webp?cid=ecf05e47xnphvcveuwzdbi1wu7nfio36j9cluelou8vfejgb&ep=v1_gifs_search&rid=200w.webp&ct=g" alt="Intermediate Badge">
+            {% elif quiz_badges == 'pro' %}
+                <img src="https://media0.giphy.com/media/8LwP0X40SwEZGIqIVZ/200w.webp?cid=ecf05e47xnphvcveuwzdbi1wu7nfio36j9cluelou8vfejgb&ep=v1_gifs_search&rid=200w.webp&ct=g" alt="Intermediate Badge">    
+            {% endif %}
+            <!-- Add similar blocks for other badge levels if needed -->
+        </div>
+    </div>
         <a href="{{ url_for('user_profile') }}" class="thank-you">Thank You!</a>
     </div>
 

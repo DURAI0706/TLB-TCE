@@ -2324,7 +2324,7 @@ def give_assignment(course_name):
             question_index = key.split("_")[-1]
             question = {
                 "question": request.form[f"question_{question_index}"],
-                "difficulty": request.form[f"difficulty_{question_index}"],
+                "difficulty_level": request.form[f"difficulty_{question_index}"],
             }
             questions.append(question)
 
